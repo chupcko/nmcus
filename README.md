@@ -1,12 +1,14 @@
 # nmcus - NodeMCU Skeleton for easy project development
 
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Author](https://img.shields.io/badge/author-Goran_"CHUPCKO"_Lazic-blue)](AUTHORS)
-![Platform](https://img.shields.io/badge/platform-NodeMCU-blue)
+[![Author](https://img.shields.io/badge/author-Goran_"CHUPCKO"_Lazic-orange)](AUTHORS)
+![Platform](https://img.shields.io/badge/platform-NodeMCU-green)
 ![MCU](https://img.shields.io/badge/mcu-ESP8266-green)
-![Docker](https://img.shields.io/badge/docker-ready-blue)
+![Docker](https://img.shields.io/badge/docker-ready-green)
 
 ## Quick Start
+Run the container with `docker run -it --device=/dev/ttyUSB0 -v $(pwd):/nmcus --rm ubuntu` to start the environment.
+Inside the container, you can run these commands to complete all stages, from building the firmware to the first execution:
 ```sh
 export DEBIAN_FRONTEND=noninteractive
 apt update
@@ -43,10 +45,12 @@ rm -rf package-lock.json package.json
 cd ..
 
 mkdir _bin
-ln -s ../_app/nodemcu-firmware/luac.cross _bin
-ln -s ../_app/nodemcu-firmware/tools/spiffsimg/spiffsimg _bin 
-ln -s ../_app/nodemcu-firmware/tools/toolchains/esptool.py _bin
-ln -s ../_app/node_modules/nodemcu-tool/bin/nodemcu-tool.js _bin
+ln -s                                                   \
+  ../_app/nodemcu-firmware/luac.cross                   \
+  ../_app/nodemcu-firmware/tools/spiffsimg/spiffsimg    \
+  ../_app/nodemcu-firmware/tools/toolchains/esptool.py  \
+  ../_app/node_modules/nodemcu-tool/bin/nodemcu-tool.js \
+  _bin                                                  \
 
 export PATH="$PATH:/nmcus/_bin"
 
