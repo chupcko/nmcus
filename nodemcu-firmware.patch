@@ -1,0 +1,128 @@
+diff -ruN nodemcu-firmware-original/app/include/user_config.h nodemcu-firmware/app/include/user_config.h
+--- nodemcu-firmware-original/app/include/user_config.h	2025-12-31 22:28:53.280911990 +0100
++++ nodemcu-firmware/app/include/user_config.h	2025-12-31 22:32:15.189910162 +0100
+@@ -39,7 +39,7 @@
+ // and good for development, it may be unwanted for non-interactive serial
+ // devices.
+ 
+-//#define DISABLE_STARTUP_BANNER
++#define DISABLE_STARTUP_BANNER
+ 
+ 
+ // When using Lua 5.1, two different builds are now supported.
+@@ -79,7 +79,7 @@
+ // LUA_FLASH_STORE defines the default partition size if the NodeMCU partition
+ // tool is not used.
+ 
+-//#define LUA_FLASH_STORE                   0x10000
++#define LUA_FLASH_STORE                   0x10000
+ 
+ // By default Lua executes the file init.lua at start up.  The following
+ // define allows you to replace this with an alternative startup.  Warning:
+@@ -88,7 +88,7 @@
+ // The example provided executes the LFS module "_init" at startup or fails
+ // through to the interactive prompt.
+ 
+-//#define LUA_INIT_STRING "pcall(function() node.flashindex'_init'() end)"
++#define LUA_INIT_STRING "pcall(function() node.flashindex'_init'() end)"
+ 
+ 
+ // NodeMCU supports two file systems: SPIFFS and FATFS, the first is available
+@@ -126,9 +126,9 @@
+ // The SHA1 and MD5 function are implemented in the ROM BIOS. The MD2 and SHA2
+ // are by firmware code, and can be enabled if you need this functionality.
+ 
+-//#define CLIENT_SSL_ENABLE
++#define CLIENT_SSL_ENABLE
+ #define SHA2_ENABLE
+-#define SSL_BUFFER_SIZE 4096
++#define SSL_BUFFER_SIZE 2048
+ #define SSL_MAX_FRAGMENT_LENGTH_CODE	MBEDTLS_SSL_MAX_FRAG_LEN_4096
+ 
+ 
+diff -ruN nodemcu-firmware-original/app/include/user_modules.h nodemcu-firmware/app/include/user_modules.h
+--- nodemcu-firmware-original/app/include/user_modules.h	2025-12-31 22:28:53.280911990 +0100
++++ nodemcu-firmware/app/include/user_modules.h	2025-12-31 22:31:34.320910532 +0100
+@@ -16,23 +16,23 @@
+ //#define LUA_USE_MODULES_BLOOM
+ //#define LUA_USE_MODULES_BMP085
+ //#define LUA_USE_MODULES_BME280
+-//#define LUA_USE_MODULES_BME280_MATH
++#define LUA_USE_MODULES_BME280_MATH
+ //#define LUA_USE_MODULES_BME680
+ //#define LUA_USE_MODULES_COAP
+-//#define LUA_USE_MODULES_COLOR_UTILS
++#define LUA_USE_MODULES_COLOR_UTILS
+ //#define LUA_USE_MODULES_CRON
+-//#define LUA_USE_MODULES_CRYPTO
++#define LUA_USE_MODULES_CRYPTO
+ //#define LUA_USE_MODULES_DCC
+ #define LUA_USE_MODULES_DHT
+-//#define LUA_USE_MODULES_ENCODER
++#define LUA_USE_MODULES_ENCODER
+ //#define LUA_USE_MODULES_ENDUSER_SETUP // USE_DNS in dhcpserver.h needs to be enabled for this module to work.
+ #define LUA_USE_MODULES_FILE
+ //#define LUA_USE_MODULES_GDBSTUB
+ #define LUA_USE_MODULES_GPIO
+-//#define LUA_USE_MODULES_GPIO_PULSE
++#define LUA_USE_MODULES_GPIO_PULSE
+ //#define LUA_USE_MODULES_HDC1080
+ //#define LUA_USE_MODULES_HMC5883L
+-//#define LUA_USE_MODULES_HTTP
++#define LUA_USE_MODULES_HTTP
+ //#define LUA_USE_MODULES_HX711
+ #define LUA_USE_MODULES_I2C
+ //#define LUA_USE_MODULES_L3G4200D
+@@ -44,19 +44,19 @@
+ #define LUA_USE_MODULES_OW
+ //#define LUA_USE_MODULES_PCM
+ //#define LUA_USE_MODULES_PERF
+-//#define LUA_USE_MODULES_PIPE
+-//#define LUA_USE_MODULES_PIXBUF
+-//#define LUA_USE_MODULES_PWM
+-//#define LUA_USE_MODULES_PWM2
++#define LUA_USE_MODULES_PIPE
++#define LUA_USE_MODULES_PIXBUF
++#define LUA_USE_MODULES_PWM
++#define LUA_USE_MODULES_PWM2
+ //#define LUA_USE_MODULES_RFSWITCH
+ //#define LUA_USE_MODULES_ROTARY
+ //#define LUA_USE_MODULES_RTCFIFO
+ //#define LUA_USE_MODULES_RTCMEM
+-//#define LUA_USE_MODULES_RTCTIME
++#define LUA_USE_MODULES_RTCTIME
+ //#define LUA_USE_MODULES_SI7021
+ //#define LUA_USE_MODULES_SIGMA_DELTA
+-//#define LUA_USE_MODULES_SJSON
+-//#define LUA_USE_MODULES_SNTP
++#define LUA_USE_MODULES_SJSON
++#define LUA_USE_MODULES_SNTP
+ //#define LUA_USE_MODULES_SOFTUART
+ //#define LUA_USE_MODULES_SOMFY
+ #define LUA_USE_MODULES_SPI
+@@ -64,20 +64,20 @@
+ //#define LUA_USE_MODULES_SWITEC
+ //#define LUA_USE_MODULES_TCS34725
+ //#define LUA_USE_MODULES_TM1829
+-//#define LUA_USE_MODULES_TLS
++#define LUA_USE_MODULES_TLS
+ #define LUA_USE_MODULES_TMR
+ //#define LUA_USE_MODULES_TSL2561
+ #define LUA_USE_MODULES_UART
+-//#define LUA_USE_MODULES_U8G2
++#define LUA_USE_MODULES_U8G2
+ //#define LUA_USE_MODULES_UCG
+-//#define LUA_USE_MODULES_WEBSOCKET
++#define LUA_USE_MODULES_WEBSOCKET
+ //#define LUA_USE_MODULES_WIEGAND
+ #define LUA_USE_MODULES_WIFI
+ //#define LUA_USE_MODULES_WIFI_MONITOR
+ //#define LUA_USE_MODULES_WPS
+ //#define LUA_USE_MODULES_WS2801
+-//#define LUA_USE_MODULES_WS2812
+-//#define LUA_USE_MODULES_WS2812_EFFECTS
++#define LUA_USE_MODULES_WS2812
++#define LUA_USE_MODULES_WS2812_EFFECTS
+ //#define LUA_USE_MODULES_XPT2046
+ 
+ //debug modules

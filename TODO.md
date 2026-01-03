@@ -1,0 +1,9 @@
+- Finish telnet
+  - Only one connection per time
+  - Check password
+  - Check status of service befora action (started or not)
+- Make web server
+- Support led
+- Support button
+- Make helper function for upload new lfs.img over telnet
+- TBD
