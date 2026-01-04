@@ -1,8 +1,8 @@
 - Finish telnet
-  - Only one connection per time
+  - Ignore first line on connection
   - Check password
-  - Check status of service befora action (started or not)
 - Make web server
+- Support setup over ap
 - Support led
 - Support button
 - Make helper function for upload new lfs.img over telnet
