@@ -19,7 +19,7 @@ function telnet_class:start()
     self.port,
     function(connection)
       if self.connection ~= nil then
-        connection:send('ALREADY CONNECTED\n')
+        connection:send('==ALREADY CONNECTED\r\n')
         connection:close()
         return
       end
@@ -42,19 +42,33 @@ function telnet_class:start()
       self.connection:on(
         'receive',
         function(connection, data)
-          print('DEBUG CONNECTION RECEIVE"'..data..'"')
-          if self.authorized then
-            node.input(data)
-          else
-            if data:gsub('\n$', '') == self.password then
-              self.connection:send('AUTHORIZED\n')
-              self.authorized = true
---              node.input('\n')
---            else
---              self.connection:send('ACCESS DENIED')
---              self.connection:close()
+--#       print('DEBUG CONNECTION RECEIVE"'.._Util.string_to_hex(data)..'"')
+          if string.byte(data, 1) ~= 0xff then
+            if self.authorized then
+              node.input(data)
+            else
+              if data:gsub('[\r\n]+$', '') == self.password then
+                self.connection:send('\255\252\001\r\n==ACCESS ALLOWED\r\n')
+                self.authorized = true
+                node.input('\n')
+              else
+                self.connection:send('\r\n==ACCESS DENIED\r\n')
+                self.close = true
+              end
             end
-         end
+          end
+        end
+      )
+      self.connection:on(
+        'sent',
+        function(connection)
+          if self.close == true then
+            self.connection:close()
+            self.connection = nil
+            self.authorized = false
+            self.close = false
+            node.output(nil)
+          end
         end
       )
       self.connection:on(
@@ -62,10 +76,11 @@ function telnet_class:start()
         function(connection)
           self.connection = nil
           self.authorized = false
+          self.close = false
           node.output(nil)
         end
       )
-      self.connection:send('CONNECTED\n')
+      self.connection:send('==PASSWORD: \255\251\001\255\252\003')
       node.input('\n')
     end
   )
