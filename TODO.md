@@ -4,6 +4,5 @@
 - Support setup over ap
 - Support led
 - Support button
-- Support real time clock
 - Make helper function for upload new lfs.img over telnet
 - TBD

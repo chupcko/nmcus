@@ -20,6 +20,7 @@ _Config = _Util.new(
     ['wifi.ap.dhcp_start'] = '192.168.1.100',
     ['wifi.sta.ssid']      = '',
     ['wifi.sta.pwd']       = '',
+    ['ntp.server']         = 'pool.ntp.org',
     ['mqtt.host']          = '',
     ['mqtt.port']          = 8883,
     ['mqtt.tls']           = true,
@@ -40,10 +41,12 @@ _Telnet = _Util.new(
   _Config.data['telnet.password'],
   _Config.data['telnet.timeout']
 )
+_Time = require('_time')
 _Network = require('_network')
 _Network.register_connected(
   function(result)
     _Util.dump(result)
+    _Time.sync()
     _Telnet:start()
   end
 )

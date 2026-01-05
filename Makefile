@@ -50,7 +50,7 @@ fsinfo:
 
 .PHONY: mkfs
 mkfs:
-	$(NODEMCU_TOOL) mkfs
+	$(NODEMCU_TOOL) mkfs --noninteractive
 
 .PHONY: first_setup
 first_setup: mkfs upload
