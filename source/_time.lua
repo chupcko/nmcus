@@ -3,12 +3,12 @@ local time_module = {}
 time_module.sync = function()
   sntp.sync(
     _Config.data['ntp.server'],
-      function(sec, usec, server)
-      end,
-      function()
-        error('ntp error')
-      end
-    )
+    function(sec, usec, server, info)
+    end,
+    function(code, code_string)
+      error('ntp error')
+    end
+  )
 end
 
 time_module.time = function()
