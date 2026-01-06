@@ -47,11 +47,12 @@ _Telnet = _Util.new(
   _Config:get('telnet.timeout')
 )
 _Network = require('_network')
-_Network.register_connected(
-  function(result)
-    _Util.dump(result)
-    _Time.sync()
-    _Telnet:start()
-  end
+_Network.register_set(
+  {
+    ['sta_got_ip'] = function(result)
+      _Time.sync()
+      _Telnet:start()
+    end
+  }
 )
 _Network.start()

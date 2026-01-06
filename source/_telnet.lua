@@ -85,7 +85,7 @@ function telnet_class:start()
       self.socket:on(
         'disconnection',
         function(socket, code)
-          self.clean()
+          self:clean()
         end
       )
       self.socket:send('==PASSWORD: \255\251\001\255\252\003')
