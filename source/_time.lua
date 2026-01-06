@@ -19,7 +19,7 @@ end
 
 time_module.string = function(sec, usec)
   local tm = rtctime.epoch2cal(sec)
-  return ('%04d-%02d-%02d %02d:%02d:%02d.%06d UTC'):format(tm.year, tm.mon, tm.day, tm.hour, tm.min, tm.sec, usec)
+  return ('%04d-%02d-%02dT%02d:%02d:%02d.%06dZ'):format(tm.year, tm.mon, tm.day, tm.hour, tm.min, tm.sec, usec)
 end
 
 return time_module
