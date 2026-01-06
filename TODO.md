@@ -5,4 +5,9 @@
 - Support led
 - Support button
 - Make helper function for upload new lfs.img over telnet
+- Add logs in networks callback
+- Make some tar file archiver
+- Use some nice time format
+- Move helper files to some dir
+- Add retry with count for time sync
 - TBD

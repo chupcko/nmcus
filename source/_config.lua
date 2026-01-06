@@ -1,45 +1,42 @@
 local config_class = _Util.class()
 
-function config_class:constructor(file_name, data_init, key_f)
+function config_class:constructor(file_name, data_init, key_function)
   self.file_name = file_name
   self.data = data_init
-  self.key_f = key_f
-  local data_s = self:load()
-  if data_s ~= nil then
-    self:set(data_s)
-  end
+  self.key_function = key_function
+  self:load()
 end
 
-function config_class:get()
-  return _Util.to_string(self.data, false)
+function config_class:get(key)
+  return self.data[key]
 end
 
-function config_class:set(data_s)
-  local data_f = loadstring(('return %s'):format(data_s))
-  if data_f == nil then
-    error(('Bad content of \'%s\''):format(self.file_name))
-  end
-  self.data = data_f()
+function config_class:set(key, value)
+  self.data[key] = value
 end
 
 function config_class:load()
-  local data_s = nil
-  if file.exists(self.file_name) == true then
-    data_s = file.getcontents(self.file_name)
-    if data_s == nil then
-      error(('Cannot load \'%s\''):format(self.file_name))
-    end
-    data_s = crypto.decrypt(
-      'AES-ECB',
-      encoder.toHex(crypto.hash('MD5', self.key_f())),
-      encoder.fromBase64(data_s)
-    )
-    local nul_location = data_s:find('\0', 1, true)
-    if nul_location ~= nil then
-      data_s = data_s:sub(1, nul_location-1)
-    end
+  if not file.exists(self.file_name) then
+    return
   end
-  return data_s
+  data_string = file.getcontents(self.file_name)
+  if data_string == nil then
+    error(('Cannot load \'%s\''):format(self.file_name))
+  end
+  data_string = crypto.decrypt(
+    'AES-ECB',
+    encoder.toHex(crypto.hash('MD5', self.key_function())),
+    encoder.fromBase64(data_string)
+  )
+  local nul_location = data_string:find('\0', 1, true)
+  if nul_location ~= nil then
+    data_string = data_string:sub(1, nul_location-1)
+  end
+  local data_function = loadstring(('return %s'):format(data_string))
+  if data_function == nil then
+    error(('Bad content of \'%s\''):format(self.file_name))
+  end
+  self.data = data_function()
 end
 
 function config_class:save()
@@ -48,8 +45,8 @@ function config_class:save()
     encoder.toBase64(
       crypto.encrypt(
         'AES-ECB',
-        encoder.toHex(crypto.hash('MD5', self.key_f())),
-        self:get()
+        encoder.toHex(crypto.hash('MD5', self.key_function())),
+        _Util.to_string(self.data, false)
       )
     )
   ) == nil then

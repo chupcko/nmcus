@@ -17,41 +17,42 @@ network_module.register_dhcp_timeout = function(call)
 end
 
 network_module.start = function()
-  if _Config.data['wifi.mode'] == 'ap' then
+  local mode = _Config:get('wifi.mode')
+  if mode == 'ap' then
     wifi.setmode(wifi.SOFTAP, false)
     wifi.ap.setip(
       {
-        ip      = _Config.data['wifi.ap.ip'],
-        netmask = _Config.data['wifi.ap.netmask'],
-        gateway = _Config.data['wifi.ap.gateway'],
+        ip      = _Config:get('wifi.ap.ip'),
+        netmask = _Config:get('wifi.ap.netmask'),
+        gateway = _Config:get('wifi.ap.gateway'),
         save    = false
       }
     )
     wifi.ap.config(
       {
-        ssid    = _Config.data['wifi.ap.ssid'],
-        pwd     = _Config.data['wifi.ap.pwd'],
+        ssid    = _Config:get('wifi.ap.ssid'),
+        pwd     = _Config:get('wifi.ap.pwd'),
         auth    = wifi.WPA_WPA2_PSK,
         save    = false
       }
     )
     wifi.ap.dhcp.config(
       {
-        start = _Config.data['wifi.ap.dhcp_start']
+        start = _Config:get('wifi.ap.dhcp_start')
       }
     )
     wifi.ap.dhcp.start()
-  elseif _Config.data['wifi.mode'] == 'sta' then
+  elseif mode == 'sta' then
     wifi.setmode(wifi.STATION, false)
     wifi.sta.config(
       {
-        ssid = _Config.data['wifi.sta.ssid'],
-        pwd  = _Config.data['wifi.sta.pwd'],
+        ssid = _Config:get('wifi.sta.ssid'),
+        pwd  = _Config:get('wifi.sta.pwd'),
         save = false
       }
     )
   else
-    error(('Bad wifi.mode \'%s\''):format(_Config.data['wifi.mode']))
+    error(('Bad wifi.mode \'%s\''):format(mode))
   end
 end
 

@@ -6,8 +6,35 @@ function telnet_class:constructor(port, password, timeout)
   self.timeout = timeout
   self.buffer_size = 1024
   self.server = nil
-  self.connection = nil
-  self.authorized = false
+  self.socket = nil
+  self.state = nil
+end
+
+telnet_class.output_in_use = false
+
+function telnet_class:register_output()
+  node.output(
+    function(out_pipe)
+      if self.socket ~= nil then
+        while true do
+          local data = out_pipe:read(self.buffer_size)
+          if data == nil or #data == 0 then
+            break
+          end
+          self.socket:send(data)
+        end
+      end
+      return false
+    end,
+    1
+  )
+end
+
+function telnet_class:clean()
+  node.output(nil)
+  telnet_class.output_in_use = nil
+  self.socket = nil
+  self.state = nil
 end
 
 function telnet_class:start()
@@ -17,80 +44,64 @@ function telnet_class:start()
   self.server = net.createServer(net.TCP, self.timeout);
   self.server:listen(
     self.port,
-    function(connection)
-      if self.connection ~= nil then
-        connection:send('==ALREADY CONNECTED\r\n')
-        connection:close()
+    function(socket)
+      if telnet_class.output_in_use then
+        socket:send('==OUTPUT ALREADY IN USE\r\n')
+        socket:close()
         return
       end
-      self.connection = connection
-      node.output(
-        function(out_pipe)
-          if self.connection ~= nil and self.authorized then
-            while true do
-              local data = out_pipe:read(self.buffer_size)
-              if data == nil or #data == 0 then
-                break
-              end
-              self.connection:send(data)
-            end
-          end
-          return false
-        end,
-        1
-      )
-      self.connection:on(
+      telnet_class.output_in_use = true
+      self.socket = socket
+      self.socket:on(
         'receive',
-        function(connection, data)
---#       print('DEBUG CONNECTION RECEIVE"'.._Util.string_to_hex(data)..'"')
-          if string.byte(data, 1) ~= 0xff then
-            if self.authorized then
-              node.input(data)
+        function(socket, data)
+          if data:byte(1) == 0xff then
+            return
+          end
+          if self.state == 'CONNECTED' then
+            if data:gsub('[\r\n]+$', '') == self.password then
+              self.state = 'ALLOWED'
+              self.socket:send('\255\252\001\r\n==ACCESS ALLOWED\r\n')
+              self:register_output()
+              node.input('\n')
             else
-              if data:gsub('[\r\n]+$', '') == self.password then
-                self.connection:send('\255\252\001\r\n==ACCESS ALLOWED\r\n')
-                self.authorized = true
-                node.input('\n')
-              else
-                self.connection:send('\r\n==ACCESS DENIED\r\n')
-                self.close = true
-              end
+              self.state = 'CLOSE_AFTER_SEND'
+              self.socket:send('\r\n==ACCESS DENIED\r\n')
             end
+          elseif self.state == 'ALLOWED' then
+            node.input(data)
           end
         end
       )
-      self.connection:on(
+      self.socket:on(
         'sent',
-        function(connection)
-          if self.close == true then
-            self.connection:close()
-            self.connection = nil
-            self.authorized = false
-            self.close = false
-            node.output(nil)
+        function(socket)
+          if self.state == 'CLOSE_AFTER_SEND' then
+            self.socket:close()
+            self:clean()
           end
         end
       )
-      self.connection:on(
+      self.socket:on(
         'disconnection',
-        function(connection)
-          self.connection = nil
-          self.authorized = false
-          self.close = false
-          node.output(nil)
+        function(socket, code)
+          self.clean()
         end
       )
-      self.connection:send('==PASSWORD: \255\251\001\255\252\003')
-      node.input('\n')
+      self.socket:send('==PASSWORD: \255\251\001\255\252\003')
+      self.state = 'CONNECTED'
     end
-  )
+ )
 end
 
 function telnet_class:stop()
   if self.server == nil then
-    error(('The telnet server on port %dis not started'):format(self.port))
+    error(('The telnet server on port %d is not started'):format(self.port))
   end
-  self.server:close()
+  if self.socket ~= nil then
+    self.socket:close()
+    self.server:clean()
+  end
   self.server = nil
 end
 

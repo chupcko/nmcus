@@ -1,7 +1,11 @@
-_Names = {
-  ['name']  = 'nmcus', -- CHANGE
-  ['mac']   = wifi.ap.getmac(),
-  ['mac_s'] = wifi.ap.getmac():gsub(':', '')
+_Consts = {
+  ['name']      = 'nmcus', -- CHANGE
+  ['version']   = '0.0',
+  ['ap_mac']    = wifi.ap.getmac(),
+  ['ap_mac_s']  = wifi.ap.getmac():gsub(':', ''),
+  ['sta_mac']   = wifi.sta.getmac(),
+  ['sta_mac_s'] = wifi.sta.getmac():gsub(':', ''),
+  ['log_size']  = 10
 }
 
 _Config = _Util.new(
@@ -12,7 +16,7 @@ _Config = _Util.new(
     ['telnet.password']    = 'secret', -- CHANGE
     ['telnet.timeout']     = 180,
     ['wifi.mode']          = 'ap', -- 'ap' or 'sta'
-    ['wifi.ap.ssid']       = ('%s - %s'):format(_Names.name, _Names.mac_s),
+    ['wifi.ap.ssid']       = ('%s - %s'):format(_Consts.name, _Consts.ap_mac_s),
     ['wifi.ap.pwd']        = '12345678',
     ['wifi.ap.ip']         = '192.168.1.1',
     ['wifi.ap.netmask']    = '255.255.255.0',
@@ -28,20 +32,20 @@ _Config = _Util.new(
     ['mqtt.key']           = '',
     ['mqtt.username']      = '',
     ['mqtt.password']      = '',
-    ['mqtt.prefix']        = ('%s/'):format(_Names.mac_s)
+    ['mqtt.prefix']        = ('%s/'):format(_Consts.sta_mac_s)
   },
   function()
-    return ('%s = %s = %s'):format(_Names.name, _Names.mac, 'secret'):reverse() -- CHANGE
+    return ('%s = %s = %s'):format(_Consts.name, _Consts.sta_mac, 'secret'):reverse() -- CHANGE
   end
 )
 
+_Log = _Util.new(require('_log'), _Consts.log_size)
 _Telnet = _Util.new(
   require('_telnet'),
-  _Config.data['telnet.port'],
-  _Config.data['telnet.password'],
-  _Config.data['telnet.timeout']
+  _Config:get('telnet.port'),
+  _Config:get('telnet.password'),
+  _Config:get('telnet.timeout')
 )
-_Time = require('_time')
 _Network = require('_network')
 _Network.register_connected(
   function(result)
