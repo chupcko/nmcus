@@ -1,6 +1,6 @@
-print()
-
+rtctime.set(0, 0)
 wifi.setmode(wifi.NULLMODE, true)
+print()
 
 if file.exists('lfs.img.new') then
   file.remove('lfs.img')
