@@ -1,6 +1,6 @@
-local telnet_class = _Util.class()
+local telnetd_class = _Util.class()
 
-function telnet_class:constructor(port, password, timeout)
+function telnetd_class:constructor(port, password, timeout)
   self.port = port
   self.password = password
   self.timeout = timeout
@@ -10,9 +10,9 @@ function telnet_class:constructor(port, password, timeout)
   self.state = nil
 end
 
-telnet_class.output_in_use = false
+telnetd_class.output_in_use = false
 
-function telnet_class:register_output()
+function telnetd_class:register_output()
   node.output(
     function(out_pipe)
       if self.socket ~= nil then
@@ -30,27 +30,27 @@ function telnet_class:register_output()
   )
 end
 
-function telnet_class:clean()
+function telnetd_class:clean()
   node.output(nil)
-  telnet_class.output_in_use = nil
+  telnetd_class.output_in_use = nil
   self.socket = nil
   self.state = nil
 end
 
-function telnet_class:start()
+function telnetd_class:start()
   if self.server ~= nil then
-    error(('The telnet server on port %d is already started'):format(self.port))
+    error(('The telnetd on port %d is already started'):format(self.port))
   end
   self.server = net.createServer(net.TCP, self.timeout);
   self.server:listen(
     self.port,
     function(socket)
-      if telnet_class.output_in_use then
+      if telnetd_class.output_in_use then
         socket:send('==OUTPUT ALREADY IN USE\r\n')
         socket:close()
         return
       end
-      telnet_class.output_in_use = true
+      telnetd_class.output_in_use = true
       self.socket = socket
       self.socket:on(
         'receive',
@@ -94,9 +94,9 @@ function telnet_class:start()
  )
 end
 
-function telnet_class:stop()
+function telnetd_class:stop()
   if self.server == nil then
-    error(('The telnet server on port %d is not started'):format(self.port))
+    error(('The telnetd on port %d is not started'):format(self.port))
   end
   if self.socket ~= nil then
     self.socket:close()
@@ -105,4 +105,4 @@ function telnet_class:stop()
   self.server = nil
 end
 
-return telnet_class
+return telnetd_class

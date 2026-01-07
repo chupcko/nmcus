@@ -1,11 +1,9 @@
-- Finish telnet
-  - Rewrite as state machine
-- Make web server
+- Make httpd server
 - Support setup over ap
 - Support led
 - Support button
 - Make helper function for upload new lfs.img over telnet
 - Make some tar file archiver
-- Move helper files to some dir
 - Add retry with count for time sync
+- Maybe using json for config
 - TBD

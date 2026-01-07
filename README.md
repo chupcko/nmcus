@@ -30,7 +30,7 @@ mkdir _app
 cd _app
 
 git clone --recurse-submodules https://github.com/nodemcu/nodemcu-firmware.git
-cat ../nodemcu-firmware.patch | patch -p0
+cat ../extra/nodemcu-firmware.patch | patch -p0
 cd nodemcu-firmware
 git checkout c8faff28e7e1676c7d14ece13e2cbb293860337e
 export V=1
