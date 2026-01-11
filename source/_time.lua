@@ -7,6 +7,9 @@ time_module.sync = function()
       _Log:log('_time', 'Sync done')
     end,
     function(code, code_string)
+      if code_string == nil then
+        code_string = ''
+      end
       _Log:log('_time', ('Sync error %d %s'):format(code, code_string))
     end
   )

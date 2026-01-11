@@ -16,7 +16,7 @@ function config_class:set(key, value)
 end
 
 function config_class:load()
-  if not file.exists(self.file_name) then
+  if file.exists(self.file_name) == false then
     return
   end
   data_string = file.getcontents(self.file_name)

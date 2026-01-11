@@ -1,6 +1,6 @@
 local network_module = {}
 
-network_module.register_set = function(calls)
+network_module.registers_set = function(calls)
 
   wifi.eventmon.register(
     wifi.eventmon.AP_PROBEREQRECVED,

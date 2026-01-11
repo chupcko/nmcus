@@ -13,8 +13,10 @@ _Config = _Util.new(
   'config.data',
   {
     ['telnetd.port']       = 23,
-    ['telnetd.password']   = 'secret', -- CHANGE
     ['telnetd.timeout']    = 180,
+    ['telnetd.password']   = 'secret', -- CHANGE
+    ['httpd.port']         = 80,
+    ['httpd.timeout']      = 180,
     ['wifi.mode']          = 'ap', -- 'ap' or 'sta'
     ['wifi.ap.ssid']       = ('%s - %s'):format(_Consts.name, _Consts.ap_mac_s),
     ['wifi.ap.pwd']        = '12345678',
@@ -40,18 +42,31 @@ _Config = _Util.new(
 )
 
 _Log = _Util.new(require('_log'), _Consts.log_size)
+
 _Telnetd = _Util.new(
   require('_telnetd'),
   _Config:get('telnetd.port'),
-  _Config:get('telnetd.password'),
-  _Config:get('telnetd.timeout')
+  _Config:get('telnetd.timeout'),
+  _Config:get('telnetd.password')
 )
+
+_Api = require('_api')
+
+_Httpd = _Util.new(
+  require('_httpd'),
+  _Config:get('httpd.port'),
+  _Config:get('httpd.timeout'),
+  _Api.execute
+)
+
 _Network = require('_network')
-_Network.register_set(
+_Network.registers_set(
   {
     ['sta_got_ip'] = function(result)
       _Time.sync()
       _Telnetd:start()
+      _Httpd:start()
+      print('Got IP')
     end
   }
 )

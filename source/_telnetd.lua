@@ -1,9 +1,9 @@
 local telnetd_class = _Util.class()
 
-function telnetd_class:constructor(port, password, timeout)
+function telnetd_class:constructor(port, timeout, password)
   self.port = port
-  self.password = password
   self.timeout = timeout
+  self.password = password
   self.buffer_size = 1024
   self.server = nil
   self.socket = nil
@@ -45,7 +45,7 @@ function telnetd_class:start()
   self.server:listen(
     self.port,
     function(socket)
-      if telnetd_class.output_in_use then
+      if telnetd_class.output_in_use == true then
         socket:send('==OUTPUT ALREADY IN USE\r\n')
         socket:close()
         return
@@ -102,6 +102,7 @@ function telnetd_class:stop()
     self.socket:close()
     self.server:clean()
   end
+  self.server:close()
   self.server = nil
 end
 

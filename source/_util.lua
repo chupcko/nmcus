@@ -46,13 +46,13 @@ util_module.to_string = function(data, add_cast_info)
   end
   local out = {}
   if type(data) == 'table' then
-    if add_cast_info then
+    if add_cast_info == true then
       table.insert(out, ('(%s)'):format(tostring(data)))
     end
     table.insert(out, '{ ')
     local first = true
     for key, value in pairs(data) do
-      if not first then
+      if first == false then
         table.insert(out, ', ')
       end
       table.insert(out, '[')
@@ -63,7 +63,7 @@ util_module.to_string = function(data, add_cast_info)
     end
     table.insert(out, ' }')
   elseif type(data) == 'function' then
-    if add_cast_info then
+    if add_cast_info == true then
       table.insert(out, ('(%s)'):format(tostring(data)))
     end
   elseif type(data) == 'string' then

@@ -1,4 +1,4 @@
-- Make httpd server
+- Start working on API
 - Support setup over ap
 - Support led
 - Support button

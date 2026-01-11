@@ -2,7 +2,7 @@ rtctime.set(0, 0)
 wifi.setmode(wifi.NULLMODE, true)
 print()
 
-if file.exists('lfs.img.new') then
+if file.exists('lfs.img.new') == true then
   file.remove('lfs.img')
   file.rename('lfs.img.new', 'lfs.img')
   node.LFS.reload('lfs.img')
