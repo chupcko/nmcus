@@ -1,11 +1,12 @@
 _Consts = {
-  ['name']      = 'nmcus', -- CHANGE
-  ['version']   = '0.0',
-  ['ap_mac']    = wifi.ap.getmac(),
-  ['ap_mac_s']  = wifi.ap.getmac():gsub(':', ''),
-  ['sta_mac']   = wifi.sta.getmac(),
-  ['sta_mac_s'] = wifi.sta.getmac():gsub(':', ''),
-  ['log_size']  = 10
+  ['name']            = 'nmcus', -- CHANGE
+  ['version']         = '0.0',
+  ['ap_mac']          = wifi.ap.getmac(),
+  ['ap_mac_s']        = wifi.ap.getmac():gsub(':', ''),
+  ['sta_mac']         = wifi.sta.getmac(),
+  ['sta_mac_s']       = wifi.sta.getmac():gsub(':', ''),
+  ['log_size']        = 10,
+  ['spar_file_name']  = 'http.spar'
 }
 
 _Config = _Util.new(
@@ -48,6 +49,11 @@ _Telnetd = _Util.new(
   _Config:get('telnetd.port'),
   _Config:get('telnetd.timeout'),
   _Config:get('telnetd.password')
+)
+
+_Spar = _Util.new(
+  require('_spar'),
+  _Consts.spar_file_name
 )
 
 _Api = require('_api')

@@ -65,7 +65,7 @@ end
 function http_connection_class:get_line(input)
   local end_line_start, end_line_end = self.body:find('\r?\n')
   if end_line_start == nil then
-    return nil
+    return
   end
   local line = self.body:sub(1, end_line_start-1)
   self.body = self.body:sub(end_line_end+1)
