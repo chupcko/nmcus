@@ -1,9 +1,9 @@
+- Finish python for creating spar (archive)
+- Make lua class for working with spar
 - Start working on API
 - Support setup over ap
 - Support led
 - Support button
 - Make helper function for upload new lfs.img over telnet
-- Make some tar file archiver
 - Add retry with count for time sync
 - Maybe using json for config
-- TBD
