@@ -20,6 +20,9 @@ $(LFS_IMG): $(SOURCES)
 	$(LUAC_CROSS) -p $(^)
 	$(LUAC_CROSS) -f -s -o $(@) $(^)
 
+.PHONY: build
+build: $(LFS_IMG)
+
 .PHONY: clean
 clean:
 	$(RM) $(LFS_IMG)
@@ -62,3 +65,30 @@ first_setup: mkfs upload
 secret:
 	$(NODEMCU_TOOL) upload extra/secret.lua
 	$(NODEMCU_TOOL) run secret.lua
+
+.PHONY: flash-firmware
+flash-firmware:
+	make -C /opt/nodemcu-firmware flash4m
+
+.PHONY: docker-build-image
+docker-build-image:
+	docker build \
+		-t local/nmcus-builder .
+
+.PHONY: docker-run
+docker-run:
+	docker run --rm -it \
+		-v .:/nmcus \
+		-w /nmcus \
+		$(foreach dev,$(wildcard /dev/ttyACM* /dev/ttyUSB*),--device=$(dev)) \
+		local/nmcus-builder \
+		/bin/bash
+
+docker-%:
+	docker run --rm -it \
+		-v .:/nmcus \
+		-w /nmcus \
+		$(foreach dev,$(wildcard /dev/ttyACM* /dev/ttyUSB*),--device=$(dev)) \
+		local/nmcus-builder \
+		make $(subst docker-,,$@)
+

@@ -57,6 +57,34 @@ export PATH="$PATH:/nmcus/_bin"
 make first_setup
 make terminal
 ```
+## Docker Start
+
+### First time, building docker image
+
+```
+make docker-build-image
+```
+
+### Flash firmware
+
+```
+make docker-flash-firmware
+```
+
+### Building
+```
+make docker-build
+```
+
+### Upload
+```
+make docker-upload
+```
+
+### Terminal
+```
+make docker-terminal
+```
 
 ## Features
 TBD
