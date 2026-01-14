@@ -37,6 +37,10 @@ function http_connection_class:destructor()
   self.httpd:unregister_connection(self)
 end
 
+function http_connection_class:send(data)
+  self.socket:send(data)
+end
+
 function http_connection_class:want_close_on_sent()
   self.state = 'CLOSE_ON_SENT'
 end
@@ -53,12 +57,12 @@ function http_connection_class:send_header(code, status, length, type)
   end
   table.insert(output, 'Connection: close\r\n')
   table.insert(output, '\r\n')
-  self.socket:send(table.concat(output))
+  self:send(table.concat(output))
 end
 
 function http_connection_class:send_simple_response(code, status, text)
   self:send_header(code, status, text:len())
-  self.socket:send(text)
+  self:send(text)
   self:want_close_on_sent()
 end
 

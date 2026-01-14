@@ -55,7 +55,7 @@ function spar_class:init()
     self.file:close()
     return
   end
-  if data ~= _Consts.version then
+  if data ~= _Consts['version'] then
     --@ log
     print('bad version')
     self.file:close()
@@ -68,7 +68,6 @@ function spar_class:init()
     self.file:close()
     return
   end
-  print(self.files_size)
   for i = 1, self.files_size do
     data_len = self.file:read(1)
     if data_len == nil then
@@ -96,6 +95,7 @@ function spar_class:init()
     end
     self.files[data] = { offset = offset, size = size }
   end
+  --@ log da je ucitan
 end
 
 function spar_class:get_size(name)
@@ -104,20 +104,30 @@ function spar_class:get_size(name)
   end
   local file = self.files[name]
   if file == nil then
-    return false
+    return
   end
   return file.size
 end
 
-function spar_class:read(name, call, call_argument)
+function spar_class:read(name, call)
   if self.file == nil then
     return
   end
   local file = self.files[name]
   if file == nil then
-    return false
+    return
   end
-  --@ finish, seek on offset read chunk of self.read_bufer_size and call
+  self.file:seek('set', file.offset)
+  local left = file.size
+  while left > 0 do
+    local chunk = self.file:read(math.min(self.read_buffer_size, left))
+    if chunk == nil then
+      return
+    end
+    left = left-#chunk
+    call(chunk)
+  end
+  return true
 end
 
 return spar_class

@@ -1,25 +1,25 @@
 _Consts = {
-  ['name']            = 'nmcus', -- CHANGE
-  ['version']         = '0.0',
-  ['ap_mac']          = wifi.ap.getmac(),
-  ['ap_mac_s']        = wifi.ap.getmac():gsub(':', ''),
-  ['sta_mac']         = wifi.sta.getmac(),
-  ['sta_mac_s']       = wifi.sta.getmac():gsub(':', ''),
-  ['log_size']        = 10,
-  ['spar_file_name']  = 'http.spar'
+  ['name']             = 'nmcus', -- CHANGE
+  ['version']          = '0.0',
+  ['wifi.ap.mac']      = wifi.ap.getmac(),
+  ['wifi.sta.mac']     = wifi.sta.getmac(),
+  ['log.size']         = 10,
+  ['config.file_name'] = 'config.data',
+  ['spar.file_name']   = 'http.spar',
+  ['api.index_file']   = 'index.html',
+  ['telnetd.port']     = 23,
+  ['telnetd.timeout']  = 180,
+  ['httpd.port']       = 80,
+  ['httpd.timeout']    = 180
 }
 
 _Config = _Util.new(
   require('_config'),
-  'config.data',
+  _Consts['config.file_name'],
   {
-    ['telnetd.port']       = 23,
-    ['telnetd.timeout']    = 180,
     ['telnetd.password']   = 'secret', -- CHANGE
-    ['httpd.port']         = 80,
-    ['httpd.timeout']      = 180,
     ['wifi.mode']          = 'ap', -- 'ap' or 'sta'
-    ['wifi.ap.ssid']       = ('%s - %s'):format(_Consts.name, _Consts.ap_mac_s),
+    ['wifi.ap.ssid']       = ('%s - %s'):format(_Consts['name'], _Consts['wifi.ap.mac']:gsub(':', '')),
     ['wifi.ap.pwd']        = '12345678',
     ['wifi.ap.ip']         = '192.168.1.1',
     ['wifi.ap.netmask']    = '255.255.255.0',
@@ -35,33 +35,33 @@ _Config = _Util.new(
     ['mqtt.key']           = '',
     ['mqtt.username']      = '',
     ['mqtt.password']      = '',
-    ['mqtt.prefix']        = ('%s/'):format(_Consts.sta_mac_s)
+    ['mqtt.prefix']        = ('%s/'):format(_Consts['wifi.sta.mac']:gsub(':', ''))
   },
   function()
-    return ('%s = %s = %s'):format(_Consts.name, _Consts.sta_mac, 'secret'):reverse() -- CHANGE
+    return ('%s = %s = %s'):format(_Consts['name'], _Consts['wifi.sta.mac'], 'secret'):reverse() -- CHANGE
   end
 )
 
-_Log = _Util.new(require('_log'), _Consts.log_size)
+_Log = _Util.new(require('_log'), _Consts['log.size'])
 
 _Telnetd = _Util.new(
   require('_telnetd'),
-  _Config:get('telnetd.port'),
-  _Config:get('telnetd.timeout'),
+  _Consts['telnetd.port'],
+  _Consts['telnetd.timeout'],
   _Config:get('telnetd.password')
 )
 
 _Spar = _Util.new(
   require('_spar'),
-  _Consts.spar_file_name
+  _Consts['spar.file_name']
 )
 
 _Api = require('_api')
 
 _Httpd = _Util.new(
   require('_httpd'),
-  _Config:get('httpd.port'),
-  _Config:get('httpd.timeout'),
+  _Consts['httpd.port'],
+  _Consts['httpd.timeout'],
   _Api.execute
 )
 

@@ -108,4 +108,12 @@ util_module.dump = function(...)
   print(table.concat(out, ', '))
 end
 
+util_module.string_starts_with = function(data, prefix)
+  return data:sub(1, #prefix) == prefix
+end
+
+util_module.string_ends_with = function(data, suffix)
+  return data:sub(-#suffix) == suffix
+end
+
 return util_module

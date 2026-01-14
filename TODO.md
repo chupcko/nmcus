@@ -1,7 +1,7 @@
-- Move some from _Config to _Consts
+- Add [] method to config for get
 - Change Api to class, send Spar
 - Finish python for creating spar (archive)
-- Make lua class for working with spar
+- Finish lua class for working with spar
 - Start working on API
 - Support setup over ap
 - Support led
