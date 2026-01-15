@@ -5,6 +5,10 @@ function log_class:constructor(size)
   self.data = {}
 end
 
+function log_class:clean()
+  self.data = {}
+end
+
 function log_class:log(who, message)
   if #self.data >= self.size then
     table.remove(self.data, 1)

@@ -1,14 +1,14 @@
 _Consts = {
   ['name']             = 'nmcus', -- CHANGE
   ['version']          = '0.0',
+  ['config.file_name'] = 'config.data',
+  ['log.size']         = 10,
   ['wifi.ap.mac']      = wifi.ap.getmac(),
   ['wifi.sta.mac']     = wifi.sta.getmac(),
-  ['log.size']         = 10,
-  ['config.file_name'] = 'config.data',
-  ['spar.file_name']   = 'http.spar',
-  ['api.index_file']   = 'index.html',
   ['telnetd.port']     = 23,
   ['telnetd.timeout']  = 180,
+  ['spar.file_name']   = 'http.spar',
+  ['api.index_file']   = 'index.html',
   ['httpd.port']       = 80,
   ['httpd.timeout']    = 180
 }
@@ -17,7 +17,6 @@ _Config = _Util.new(
   require('_config'),
   _Consts['config.file_name'],
   {
-    ['telnetd.password']   = 'secret', -- CHANGE
     ['wifi.mode']          = 'ap', -- 'ap' or 'sta'
     ['wifi.ap.ssid']       = ('%s - %s'):format(_Consts['name'], _Consts['wifi.ap.mac']:gsub(':', '')),
     ['wifi.ap.pwd']        = '12345678',
@@ -28,6 +27,7 @@ _Config = _Util.new(
     ['wifi.sta.ssid']      = '',
     ['wifi.sta.pwd']       = '',
     ['ntp.server']         = 'pool.ntp.org',
+    ['telnetd.password']   = 'secret', -- CHANGE
     ['mqtt.host']          = '',
     ['mqtt.port']          = 8883,
     ['mqtt.tls']           = true,
@@ -56,13 +56,17 @@ _Spar = _Util.new(
   _Consts['spar.file_name']
 )
 
-_Api = require('_api')
+_Api = _Util.new(
+  require('_api'),
+  _Spar,
+  _Consts['api.index_file']
+)
 
 _Httpd = _Util.new(
   require('_httpd'),
   _Consts['httpd.port'],
   _Consts['httpd.timeout'],
-  _Api.execute
+  _Api
 )
 
 _Network = require('_network')

@@ -1,11 +1,8 @@
-- Add [] method to config for get
-- Change Api to class, send Spar
 - Finish python for creating spar (archive)
 - Finish lua class for working with spar
-- Start working on API
 - Support setup over ap
 - Support led
 - Support button
-- Make helper function for upload new lfs.img over telnet
-- Add retry with count for time sync
+- Make helper function for upload new lfs.img and spar over telnet
+- Add retry count for time sync
 - Maybe using json for config

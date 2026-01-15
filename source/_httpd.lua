@@ -123,7 +123,7 @@ function http_connection_class:processing()
       end
       self.state = 'DONE'
     elseif self.state == 'DONE' then
-      local result = self.httpd.execute(self)
+      local result = self.httpd.api:execute(self)
       if result == nil then
         self:send_simple_response(500, 'Internal Server Error', 'Internal Server Error\r\n')
         return
@@ -140,10 +140,10 @@ end
 
 local httpd_class = _Util.class()
 
-function httpd_class:constructor(port, timeout, execute)
+function httpd_class:constructor(port, timeout, api)
   self.port = port
   self.timeout = timeout
-  self.execute = execute
+  self.api = api
   self.server = nil
   self.http_connections = {}
 end

@@ -27,7 +27,7 @@ util_module.new = function(class, ...)
   setmetatable(new_instance, new_instance)
   new_instance.__index = class
   new_instance.__class = class
-  if type(class.constructor) == 'function' then
+  if type(new_instance.constructor) == 'function' then
     result = new_instance:constructor(...)
     if result ~= nil then
       return result

@@ -1,6 +1,11 @@
-local api_module = {}
+local api_class = {}
 
-api_module.execute = function(http_connection)
+function api_class:constructor(spar, index_file)
+  self.spar = spar
+  self.index_file = index_file
+end
+
+function api_class:execute(http_connection)
   if _Util.string_starts_with(http_connection.uri, '/api') then
     http_connection:send_simple_response(200, 'OK', 'OK\r\n')
     return true
@@ -8,7 +13,7 @@ api_module.execute = function(http_connection)
   if http_connection.method == 'GET' then
     local uri = http_connection.uri
     if _Util.string_ends_with(uri, '/') then
-      uri = uri .. _Consts['api.index_file']
+      uri = uri .. self.index_file
     end
     local size = _Spar:get_size(uri)
     if size ~= nil then
@@ -26,4 +31,4 @@ api_module.execute = function(http_connection)
   return false
 end
 
-return api_module
+return api_class

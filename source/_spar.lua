@@ -95,7 +95,7 @@ function spar_class:init()
     end
     self.files[data] = { offset = offset, size = size }
   end
-  --@ log da je ucitan
+   _Log:log('_spar', ('Loaded index %s'):format(self.file_name))
 end
 
 function spar_class:get_size(name)
