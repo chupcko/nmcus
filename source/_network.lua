@@ -99,7 +99,7 @@ network_module.start = function()
     wifi.ap.config(
       {
         ssid    = _Config:get('wifi.ap.ssid'),
-        pwd     = _Config:get('wifi.ap.pwd'),
+        pwd     = _Config:get('wifi.ap.password'),
         auth    = wifi.WPA_WPA2_PSK,
         save    = false
       }
@@ -115,7 +115,7 @@ network_module.start = function()
     wifi.sta.config(
       {
         ssid = _Config:get('wifi.sta.ssid'),
-        pwd  = _Config:get('wifi.sta.pwd'),
+        pwd  = _Config:get('wifi.sta.password'),
         save = false
       }
     )

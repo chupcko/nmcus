@@ -63,3 +63,22 @@ TBD
 
 ## Requirements
 TBD
+
+## SPAR format
+```
+SPAR
+(version_size)1
+(version)version_size
+(files_count)2
+
+{
+  (name_size)1
+  (name)name_size
+  (offset)4
+  (size)4
+}files_count
+
+{
+  offset[i]: (file)size[i]
+}files_count as i
+```

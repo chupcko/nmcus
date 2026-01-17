@@ -6,7 +6,7 @@ util_module.supers_access = function(data, data_key)
       return super[data_key]
     end
   end
-  return
+  return nil
 end
 
 util_module.class = function(...)

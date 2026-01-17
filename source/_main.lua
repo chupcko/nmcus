@@ -19,13 +19,13 @@ _Config = _Util.new(
   {
     ['wifi.mode']          = 'ap', -- 'ap' or 'sta'
     ['wifi.ap.ssid']       = ('%s - %s'):format(_Consts['name'], _Consts['wifi.ap.mac']:gsub(':', '')),
-    ['wifi.ap.pwd']        = '12345678',
+    ['wifi.ap.password']   = '12345678',
     ['wifi.ap.ip']         = '192.168.1.1',
     ['wifi.ap.netmask']    = '255.255.255.0',
     ['wifi.ap.gateway']    = '192.168.1.1',
     ['wifi.ap.dhcp_start'] = '192.168.1.100',
     ['wifi.sta.ssid']      = '',
-    ['wifi.sta.pwd']       = '',
+    ['wifi.sta.password']  = '',
     ['ntp.server']         = 'pool.ntp.org',
     ['telnetd.password']   = 'secret', -- CHANGE
     ['mqtt.host']          = '',

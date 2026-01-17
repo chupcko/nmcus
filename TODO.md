@@ -1,5 +1,6 @@
+- Made SPAR formal description
+- Change error with logs
 - Finish python for creating spar (archive)
-- Finish lua class for working with spar
 - Support setup over ap
 - Support led
 - Support button

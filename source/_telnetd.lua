@@ -91,7 +91,7 @@ function telnetd_class:start()
       self.socket:send('==PASSWORD: \255\251\001\255\252\003')
       self.state = 'CONNECTED'
     end
- )
+  )
 end
 
 function telnetd_class:stop()
