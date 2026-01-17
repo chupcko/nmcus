@@ -31,7 +31,7 @@ end
 function spar_class:init()
   self.file = file.open(self.file_name, 'r')
   if self.file == nil then
-    _Log:log('_spar', ('Can not open \'%s\''):format(self.file_name))
+    _Log:log('_spar', ('Cannot open \'%s\''):format(self.file_name))
     return
   end
   if self.file:read(4) ~= 'SPAR' then

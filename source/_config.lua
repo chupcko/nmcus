@@ -32,11 +32,11 @@ function config_class:load()
   if nul_location ~= nil then
     data_string = data_string:sub(1, nul_location-1)
   end
-  local data_function = loadstring(('return %s'):format(data_string))
-  if data_function == nil then
+  result, self.data = pcall(sjson.decode, data_string)
+  if result == false then
+    self.data = {}
     error(('Bad content of \'%s\''):format(self.file_name))
   end
-  self.data = data_function()
 end
 
 function config_class:save()
@@ -46,7 +46,7 @@ function config_class:save()
       crypto.encrypt(
         'AES-ECB',
         encoder.toHex(crypto.hash('MD5', self.key_function())),
-        _Util.to_string(self.data, false)
+        sjson.encode(self.data)
       )
     )
   ) == nil then

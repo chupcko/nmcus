@@ -79,10 +79,16 @@ first_setup: mkfs upload extra/first_setup.lua
 	$(NODEMCU_TOOL) run first_setup.lua
 	$(NODEMCU_TOOL) remove first_setup.lua
 
-.PHONY: secret
-secret: extra/secret.lua
+.PHONY: secret_upload
+secret_upload: extra/secret.lua
 	$(NODEMCU_TOOL) upload extra/secret.lua
+
+.PHONY: secret_run
+secret_run:
 	$(NODEMCU_TOOL) run secret.lua
+
+.PHONY: secret
+secret: secret_upload secret_run
 
 .PHONY: reinit
 reinit:

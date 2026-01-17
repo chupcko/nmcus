@@ -13,13 +13,15 @@ _Consts = {
   ['httpd.timeout']    = 180
 }
 
+_Log = _Util.new(require('_log'), _Consts['log.size'])
+
 _Config = _Util.new(
   require('_config'),
   _Consts['config.file_name'],
   {
     ['wifi.mode']          = 'ap', -- 'ap' or 'sta'
     ['wifi.ap.ssid']       = ('%s - %s'):format(_Consts['name'], _Consts['wifi.ap.mac']:gsub(':', '')),
-    ['wifi.ap.password']   = '12345678',
+    ['wifi.ap.password']   = '12345678', -- CHANGE
     ['wifi.ap.ip']         = '192.168.1.1',
     ['wifi.ap.netmask']    = '255.255.255.0',
     ['wifi.ap.gateway']    = '192.168.1.1',
@@ -41,8 +43,6 @@ _Config = _Util.new(
     return ('%s = %s = %s'):format(_Consts['name'], _Consts['wifi.sta.mac'], 'secret'):reverse() -- CHANGE
   end
 )
-
-_Log = _Util.new(require('_log'), _Consts['log.size'])
 
 _Telnetd = _Util.new(
   require('_telnetd'),
@@ -76,7 +76,7 @@ _Network.registers_set(
       _Time.sync()
       _Telnetd:start()
       _Httpd:start()
-      print('Got IP')
+      print(('Got IP: %s'):format(result.IP))
     end
   }
 )
