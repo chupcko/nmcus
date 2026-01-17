@@ -26,7 +26,10 @@ def list_files(folder) :
 
 def make_spar(output_file_name, version, folder) :
   list = list_files(folder)
-  #@ check
+  if list == False :
+    print(f'Folder not found: {folder}')
+    return
+  #
 
   header_b = b'SPAR'
   version_b = version.encode('ascii')
@@ -40,7 +43,6 @@ def make_spar(output_file_name, version, folder) :
   #$
 
   output_file = open(output_file_name, 'wb')
-  #@ check
   output_file.write(header_b)
   for file in list :
     output_file.write(struct.pack('B', len(file['name'])))
@@ -52,7 +54,6 @@ def make_spar(output_file_name, version, folder) :
 
   for file in list :
     input_file = open(file['path'], 'rb')
-    #@ check
     while True :
       chunk = input_file.read(1024)
       if not chunk :
@@ -74,4 +75,8 @@ if len(sys.argv) != 4 :
 output_file_name = sys.argv[1]
 version = sys.argv[2]
 folder = sys.argv[3]
-make_spar(output_file_name, version, folder)
+try :
+  make_spar(output_file_name, version, folder)
+except OSError as e:
+  print(f'Cannot access file: {e}')
+#$
