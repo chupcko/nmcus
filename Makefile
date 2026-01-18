@@ -4,12 +4,10 @@ VERSION = 0.0
 PORT ?= /dev/ttyUSB0
 BAUD ?= 115200
 
-
 LUAC_CROSS = luac.cross
 NODEMCU_TOOL = nodemcu-tool.js -p $(PORT) -b $(BAUD)
 ESPTOOL = esptool.py -p $(PORT) -b $(BAUD) --no-stub
 RM = rm -f
-
 
 LFS_IMG = lfs.img
 HTTP_SPAR = http.spar
@@ -36,20 +34,6 @@ $(HTTP_SPAR): $(HTTP_FILES)
 clean:
 	$(RM) $(LFS_IMG) $(HTTP_SPAR)
 
-.PHONY: upload_lfs_img
-upload_lfs_img: $(LFS_IMG)
-	$(NODEMCU_TOOL) upload $(<) -n $(<).new
-
-.PHONY: upload_http_spar
-upload_http_spar: $(HTTP_SPAR)
-	$(NODEMCU_TOOL) upload $(<)
-
-.PHONY: upload
-upload: upload_lfs_img upload_http_spar
-
-.PHONY: reload
-reload: upload_lfs_img reset
-
 
 .PHONY: reset
 reset:
@@ -73,6 +57,21 @@ mkfs:
 	$(NODEMCU_TOOL) mkfs --noninteractive
 
 
+.PHONY: upload_lfs_img
+upload_lfs_img: $(LFS_IMG)
+	$(NODEMCU_TOOL) upload $(<) -n $(<).new
+
+.PHONY: upload_http_spar
+upload_http_spar: $(HTTP_SPAR)
+	$(NODEMCU_TOOL) upload $(<)
+
+.PHONY: upload
+upload: upload_lfs_img upload_http_spar
+
+.PHONY: reload
+reload: upload_lfs_img reset
+
+
 .PHONY: first_setup
 first_setup: mkfs upload extra/first_setup.lua
 	$(NODEMCU_TOOL) upload extra/first_setup.lua
@@ -86,6 +85,10 @@ secret_upload: extra/secret.lua
 .PHONY: secret_run
 secret_run:
 	$(NODEMCU_TOOL) run secret.lua
+
+.PHONY: secret_remove
+secret_remove:
+	$(NODEMCU_TOOL) remove secret.lua
 
 .PHONY: secret
 secret: secret_upload secret_run

@@ -15,21 +15,29 @@ _Consts = {
 
 _Log = _Util.new(require('_log'), _Consts['log.size'])
 
+_Crypt = _Util.new(
+  require('_crypt'),
+  function()
+    return ('%s = %s = %s'):format(_Consts['name'], _Consts['wifi.sta.mac'], 'secret'):reverse() -- CHANGE
+  end
+)
+
 _Config = _Util.new(
   require('_config'),
   _Consts['config.file_name'],
+  _Crypt,
   {
     ['wifi.mode']          = 'ap', -- 'ap' or 'sta'
     ['wifi.ap.ssid']       = ('%s - %s'):format(_Consts['name'], _Consts['wifi.ap.mac']:gsub(':', '')),
-    ['wifi.ap.password']   = '12345678', -- CHANGE
+    ['wifi.ap.password']   = _Crypt:encrypt('12345678'), -- CHANGE
     ['wifi.ap.ip']         = '192.168.1.1',
     ['wifi.ap.netmask']    = '255.255.255.0',
     ['wifi.ap.gateway']    = '192.168.1.1',
     ['wifi.ap.dhcp_start'] = '192.168.1.100',
     ['wifi.sta.ssid']      = '',
-    ['wifi.sta.password']  = '',
+    ['wifi.sta.password']  = _Crypt:encrypt(''),
     ['ntp.server']         = 'pool.ntp.org',
-    ['telnetd.password']   = 'secret', -- CHANGE
+    ['telnetd.password']   = _Crypt:encrypt('secret'), -- CHANGE
     ['mqtt.host']          = '',
     ['mqtt.port']          = 8883,
     ['mqtt.tls']           = true,
@@ -38,10 +46,7 @@ _Config = _Util.new(
     ['mqtt.username']      = '',
     ['mqtt.password']      = '',
     ['mqtt.prefix']        = ('%s/'):format(_Consts['wifi.sta.mac']:gsub(':', ''))
-  },
-  function()
-    return ('%s = %s = %s'):format(_Consts['name'], _Consts['wifi.sta.mac'], 'secret'):reverse() -- CHANGE
-  end
+  }
 )
 
 _Telnetd = _Util.new(

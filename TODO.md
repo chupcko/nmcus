@@ -1,9 +1,10 @@
 - Made SPAR formal description
-- Keep passwords encrypted in memory
 - Use pcall where need
 - Change error with logs
 - Support setup over ap
 - Support led
 - Support button
+- Add fs functions for makeing file from telnet
 - Make helper function for upload new lfs.img and spar over telnet
 - Add retry count for time sync
+- Finish documentation

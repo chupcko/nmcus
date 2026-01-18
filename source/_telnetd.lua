@@ -59,7 +59,7 @@ function telnetd_class:start()
             return
           end
           if self.state == 'CONNECTED' then
-            if data:gsub('[\r\n]+$', '') == self.password then
+            if data:gsub('[\r\n]+$', '') == _Crypt:decrypt(self.password) then
               self.state = 'ALLOWED'
               self.socket:send('\255\252\001\r\n==ACCESS ALLOWED\r\n')
               self:register_output()

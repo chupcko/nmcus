@@ -76,6 +76,14 @@ util_module.to_string = function(data, add_cast_info)
   return table.concat(out)
 end
 
+util_module.dump = function(...)
+  local out = {}
+  for _, argument in ipairs({ ... }) do
+    table.insert(out, util_module.to_string(argument, true))
+  end
+  print(table.concat(out, ', '))
+end
+
 util_module.string_to_hex = function(data)
   local out = {}
   for i = 1, data:len() do
@@ -100,20 +108,20 @@ util_module.string_from_hex = function(...)
   return table.concat(out)
 end
 
-util_module.dump = function(...)
-  local out = {}
-  for _, argument in ipairs({ ... }) do
-    table.insert(out, util_module.to_string(argument, true))
-  end
-  print(table.concat(out, ', '))
-end
-
 util_module.string_starts_with = function(data, prefix)
   return data:sub(1, #prefix) == prefix
 end
 
 util_module.string_ends_with = function(data, suffix)
   return data:sub(-#suffix) == suffix
+end
+
+util_module.table_shallow_copy = function(data)
+  local copy = {}
+  for k, v in pairs(data) do
+    copy[k] = v
+  end
+  return copy
 end
 
 return util_module
