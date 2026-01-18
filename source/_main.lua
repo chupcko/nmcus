@@ -81,7 +81,7 @@ _Network.registers_set(
       _Time.sync()
       _Telnetd:start()
       _Httpd:start()
-      print(('Got IP: %s'):format(result.IP))
+      print(('==IP %s'):format(result.IP))
     end
   }
 )

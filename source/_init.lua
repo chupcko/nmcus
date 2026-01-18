@@ -37,4 +37,5 @@ end
 
 _Util = require('_util')
 _Time = require('_time')
+_Fs = require('_fs')
 require('_main')

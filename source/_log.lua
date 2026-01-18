@@ -18,12 +18,12 @@ function log_class:log(who, message)
 end
 
 function log_class:print()
-  print('LOG start')
+  print('==LOG start')
   for k, v in ipairs(self.data) do
     local time_string = _Time.string(v[1], v[2])
     print(('%s %s %s'):format(time_string, v[3], v[4]))
   end
-  print('LOG end')
+  print('==LOG end')
 end
 
 return log_class
