@@ -2,6 +2,11 @@ rtctime.set(0, 0)
 wifi.setmode(wifi.NULLMODE, true)
 print()
 
+if file.exists('http.spar.new') == true then
+  file.remove('http.spar')
+  file.rename('http.spar.new', 'http.spar')
+end
+
 if file.exists('lfs.img.new') == true then
   file.remove('lfs.img')
   file.rename('lfs.img.new', 'lfs.img')

@@ -33,6 +33,9 @@ end
 function telnetd_class:clean()
   node.output(nil)
   telnetd_class.output_in_use = nil
+  self.socket.on('receive', nil)
+  self.socket.on('sent', nil)
+  self.socket.on('disconnection', nil)
   self.socket = nil
   self.state = nil
 end

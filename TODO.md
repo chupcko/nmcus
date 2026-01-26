@@ -1,5 +1,11 @@
+- Move send file over http to api
+- Use for upload temporary file, keep only header in memory
+- Use output buffer for http
+- Add reader for spar
 - Use local where need
+- Use preload strings, use buf[#buf+1] = chunk data = table.concat(buf)
 - Use pcall where need
+- Use collectgarbage()
 - Made SPAR formal description
 - Change error with logs
 - Support setup over ap

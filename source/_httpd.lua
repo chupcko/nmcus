@@ -9,23 +9,28 @@ function http_connection_class:constructor(httpd, socket)
   self.headers = {}
   self.body_size = 0
   self.body = ''
-  socket:on(
+  self.sent_call = nil
+  self.socket = socket
+  self.socket:on(
     'receive',
     function(socket, data)
       self.body = self.body .. data
       self:processing()
     end
   )
-  socket:on(
+  self.socket:on(
     'sent',
     function(socket)
+      if self.sent_call ~= nil then
+        self.sent_call()
+      end
       if self.state == 'CLOSE_ON_SENT' then
         self.socket:close()
         self:destructor()
       end
     end
   )
-  socket:on(
+  self.socket:on(
     'disconnection',
     function(socket, code)
       self:destructor()
@@ -34,18 +39,24 @@ function http_connection_class:constructor(httpd, socket)
 end
 
 function http_connection_class:destructor()
+  self.socket:on('receive', nil)
+  self.socket:on('sent', nil)
+  self.socket:on('disconnection', nil)
+  self.socket = nil
   self.httpd:unregister_connection(self)
 end
 
-function http_connection_class:send(data)
+function http_connection_class:send(data, sent_call, last)
+  if last then
+    self.state = 'CLOSE_ON_SENT'
+  end
+  self.sent_call = sent_call
+  print(#data)
+  print(data)
   self.socket:send(data)
 end
 
-function http_connection_class:want_close_on_sent()
-  self.state = 'CLOSE_ON_SENT'
-end
-
-function http_connection_class:send_header(code, status, length, type)
+function http_connection_class:send_header(code, status, length, type, call)
   if type == nil then
     type = 'text/html'
   end
@@ -57,13 +68,19 @@ function http_connection_class:send_header(code, status, length, type)
   end
   table.insert(output, 'Connection: close\r\n')
   table.insert(output, '\r\n')
-  self:send(table.concat(output))
+  self:send(table.concat(output), call)
 end
 
 function http_connection_class:send_simple_response(code, status, text)
-  self:send_header(code, status, text:len())
-  self:send(text)
-  self:want_close_on_sent()
+  self:send_header(
+    code,
+    status,
+    text:len(),
+    'text/html',
+    function()
+      self:send(text, nil, true)
+    end
+  )
 end
 
 function http_connection_class:get_line(input)
@@ -115,14 +132,14 @@ function http_connection_class:processing()
         self.body_size = tonumber(self.body_size)
         self.state = 'IN_BODY'
       else
-        self.state = 'DONE'
+        self.state = 'PROCESS'
       end
     elseif self.state == 'IN_BODY' then
       if self.body:len() < self.body_len then
         return
       end
-      self.state = 'DONE'
-    elseif self.state == 'DONE' then
+      self.state = 'PROCESS'
+    elseif self.state == 'PROCESS' then
       local result = self.httpd.api:execute(self)
       if result == nil then
         self:send_simple_response(500, 'Internal Server Error', 'Internal Server Error\r\n')
@@ -132,7 +149,6 @@ function http_connection_class:processing()
         self:send_simple_response(404, 'Not Found', 'Not Found\r\n')
         return
       end
-      self:want_close_on_sent()
       return
     end
   end

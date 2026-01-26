@@ -59,11 +59,13 @@ mkfs:
 
 .PHONY: upload_lfs_img
 upload_lfs_img: $(LFS_IMG)
+	$(NODEMCU_TOOL) remove $(<).new
 	$(NODEMCU_TOOL) upload $(<) -n $(<).new
 
 .PHONY: upload_http_spar
 upload_http_spar: $(HTTP_SPAR)
-	$(NODEMCU_TOOL) upload $(<)
+	$(NODEMCU_TOOL) remove $(<).new
+	$(NODEMCU_TOOL) upload $(<) -n $(<).new
 
 .PHONY: upload
 upload: upload_lfs_img upload_http_spar
