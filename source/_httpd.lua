@@ -4,25 +4,32 @@ function http_connection_class:constructor(httpd, socket)
   self.httpd = httpd
   self.socket = socket
   self.state = nil
+  self.input = ''
   self.method = nil
   self.uri = nil
   self.headers = {}
   self.body_size = 0
-  self.body = ''
-  self.sent_call = nil
+  self.body_file_name = nil
+  self.body_file = nil
+  self.body_file_size = 0
+  self.call_on_sent = nil
   self.socket = socket
   self.socket:on(
     'receive',
     function(socket, data)
-      self.body = self.body .. data
+      if self.state == 'IN_BODY' then
+        self.input = data
+      else
+        self.input = self.input .. data
+      end
       self:processing()
     end
   )
   self.socket:on(
     'sent',
     function(socket)
-      if self.sent_call ~= nil then
-        self.sent_call()
+      if type(self.call_on_sent) == 'function' then
+        self.call_on_sent()
       end
       if self.state == 'CLOSE_ON_SENT' then
         self.socket:close()
@@ -43,20 +50,22 @@ function http_connection_class:destructor()
   self.socket:on('sent', nil)
   self.socket:on('disconnection', nil)
   self.socket = nil
+  if self.body_file ~= nil then
+    self.body_file:close()
+    self.body_file = nil
+  end
   self.httpd:unregister_connection(self)
 end
 
-function http_connection_class:send(data, sent_call, last)
+function http_connection_class:send(data, call_on_sent, last)
   if last then
     self.state = 'CLOSE_ON_SENT'
   end
-  self.sent_call = sent_call
-  print(#data)
-  print(data)
+  self.call_on_sent = call_on_sent
   self.socket:send(data)
 end
 
-function http_connection_class:send_header(code, status, length, type, call)
+function http_connection_class:send_header(code, status, length, type, call_on_sent)
   if type == nil then
     type = 'text/html'
   end
@@ -68,7 +77,7 @@ function http_connection_class:send_header(code, status, length, type, call)
   end
   table.insert(output, 'Connection: close\r\n')
   table.insert(output, '\r\n')
-  self:send(table.concat(output), call)
+  self:send(table.concat(output), call_on_sent)
 end
 
 function http_connection_class:send_simple_response(code, status, text)
@@ -84,12 +93,12 @@ function http_connection_class:send_simple_response(code, status, text)
 end
 
 function http_connection_class:get_line(input)
-  local end_line_start, end_line_end = self.body:find('\r?\n')
+  local end_line_start, end_line_end = self.input:find('\r?\n')
   if end_line_start == nil then
     return nil
   end
-  local line = self.body:sub(1, end_line_start-1)
-  self.body = self.body:sub(end_line_end+1)
+  local line = self.input:sub(1, end_line_start-1)
+  self.input = self.input:sub(end_line_end+1)
   return line
 end
 
@@ -130,14 +139,26 @@ function http_connection_class:processing()
           return
         end
         self.body_size = tonumber(self.body_size)
+        self.body_file_name = _Fs.get_temporary_file_name('upload_', 20)
+        self.body_file = file.open(self.body_file_name, 'w')
+        if self.body_file == nil then
+          self:send_simple_response(500, 'Internal Server Error', 'Internal Server Error\r\n')
+          return
+        end
+        self.body_file_size = 0
         self.state = 'IN_BODY'
       else
         self.state = 'PROCESS'
       end
     elseif self.state == 'IN_BODY' then
-      if self.body:len() < self.body_len then
+      self.body_file:write(self.input)
+      self.body_file_size = self.body_file_size+self.input:len()
+      self.input = ''
+      if self.body_file_size < self.body_size then
         return
       end
+      self.body_file:close()
+      self.body_file = nil
       self.state = 'PROCESS'
     elseif self.state == 'PROCESS' then
       local result = self.httpd.api:execute(self)

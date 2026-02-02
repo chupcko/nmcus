@@ -1,24 +1,21 @@
 local spar_reader_class = _Util.class()
 
-function spar_reader_class:constructor(spar, name, http_connection, call)
+function spar_reader_class:constructor(spar, name)
   self.spar = spar
   self.name = name
-  self.http_connection = http_connection
-  self.call = call
   local data = self.spar.files[name]
   if data == nil then
-    return
+    return false
   end
   self.file = file.open(self.spar.file_name, 'r')
   if self.file == nil then
-    return
+    return false
   end
   self.file:seek('set', data.offset)
   self.left = data.size
-  self:read()
 end
 
-function spar_reader_class:read()
+function spar_reader_class:read_next(call_on_chunk)
   local chunk = self.file:read(math.min(self.spar.read_buffer_size, self.left))
   if chunk == nil then
     --@ what now?
@@ -26,31 +23,18 @@ function spar_reader_class:read()
   end
   self.left = self.left-#chunk
   if self.left == 0 then
-    self.http_connection:send(
-      chunk,
-      function()
-        if self.call ~= nil then
-          self.call()
-        end
-      end,
-      true
-    )
+    call_on_chunk(chunk, true)
     self.file:close()
-  else
-    self.http_connection:send(
-      chunk,
-      function()
-        self:read()
-      end
-    )
+    return
   end
+  call_on_chunk(chunk, false)
 end
 
 local spar_class = _Util.class()
 
 function spar_class:constructor(file_name)
   self.file_name = file_name
-  self.read_buffer_size = 1024
+  self.read_buffer_size = 1024 --@ take from config
   self.files_size = 0
   self.files = {}
   self.file = file.open(self.file_name, 'r')
@@ -133,7 +117,7 @@ function spar_class:get_size(name)
   return file.size
 end
 
-function spar_class:read(name, call)
+function spar_class:read(name, call_on_chunk)
   local data = self.files[name]
   if data == nil then
     return nil
@@ -151,14 +135,14 @@ function spar_class:read(name, call)
       return nil
     end
     left = left-#chunk
-    call(chunk)
+    call_on_chunk(chunk)
   end
   file:close()
   return true
 end
 
-function spar_class:get_reader(name, http_connection, final_call)
-  return _Util.new(spar_reader_class, self, name, http_connection, call)
+function spar_class:get_reader(name)
+  return _Util.new(spar_reader_class, self, name)
 end
 
 return spar_class

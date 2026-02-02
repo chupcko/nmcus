@@ -104,4 +104,30 @@ fs_module.delete = function(file_name)
   file.remove(file_name)
 end
 
+fs_module.get_temporary_file_name = function(prefix, length)
+  if length == nil then
+    length = 10
+  end
+  if prefix == nil then
+    prefix = 'tmp_'
+  end
+  if #prefix + length > 32 then
+    length = 32-#prefix
+  end
+  local code_a = string.byte('a')
+  local code_z = string.byte('z')
+  math.randomseed(tmr.now())
+  while true do
+    local name = {}
+    table.insert(name, prefix)
+    for i = 1, length do
+      table.insert(name, string.char(math.random(code_a, code_z)))
+    end
+    name = table.concat(name)
+    if file.exists(name) == false then
+      return name
+    end
+  end
+end
+
 return fs_module

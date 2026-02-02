@@ -1,3 +1,43 @@
+
+local api_sender_class = _Util.class()
+
+function api_sender_class:constructor(api, name, http_connection, call_on_end)
+  self.api = api
+  self.name = name
+  self.http_connection = http_connection
+  self.call_on_end = call_on_end
+  self.reader = self.api.spar:get_reader(name)
+  if self.reader == false then
+    return false
+  end
+  self:read_next()
+end
+
+function api_sender_class:read_next()
+  self.reader:read_next(
+    function(chunk, last)
+      if last then
+        self.http_connection:send(
+          chunk,
+          function()
+            if type(self.call_on_end) == 'function' then
+              self.call_on_end(true)
+            end
+          end,
+          true
+        )
+      else
+        self.http_connection:send(
+          chunk,
+          function()
+            self:read_next()
+          end
+        )
+      end
+    end
+  )
+end
+
 local api_class = {}
 
 function api_class:constructor(spar, index_file)
@@ -51,13 +91,19 @@ function api_class:execute(http_connection)
       size,
       api_class.get_mime_type(uri),
       function()
-        local reader = self.spar:get_reader(
+        local sender = _Util.new(
+          api_sender_class,
+          self,
           uri,
           http_connection,
-          function()
-            reader = nil --@ do you need?
+          function(status)
+            sender = nil --@ do you need?
           end
         )
+        if sender == false then
+          http_connection:send_simple_response(404, 'Not Found', 'Not Found\r\n')
+          sender = nil
+        end
       end
     )
     return true

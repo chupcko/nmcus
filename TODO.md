@@ -1,7 +1,5 @@
-- Move send file over http to api
-- Use for upload temporary file, keep only header in memory
-- Use output buffer for http
-- Add reader for spar
+- Add some upload demo in _api
+- Use table.insert for input buffer in _http
 - Use local where need
 - Use preload strings, use buf[#buf+1] = chunk data = table.concat(buf)
 - Use pcall where need
