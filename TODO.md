@@ -1,3 +1,8 @@
+- Fix js to modern js
+- For small post use string
+- Fill disconnect callback from network
+- For functions on spar and img use _Fs in _init
+- One file for upload, archive with img and spar
 - Add some upload demo in _api
 - Use table.insert for input buffer in _http
 - Use local where need

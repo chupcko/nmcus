@@ -87,7 +87,7 @@ end
 network_module.start = function()
   local mode = _Config:get('wifi.mode')
   if mode == 'ap' then
-    wifi.setmode(wifi.SOFTAP, false)
+    wifi.setmode(wifi.STATIONAP, false)
     wifi.ap.setip(
       {
         ip      = _Config:get('wifi.ap.ip'),
@@ -122,6 +122,10 @@ network_module.start = function()
   else
     error(('Bad wifi.mode \'%s\''):format(mode))
   end
+end
+
+network_module.scan_ap = function(call)
+  wifi.sta.getap(1, call)
 end
 
 return network_module

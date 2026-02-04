@@ -1,0 +1,30 @@
+body {
+  font-family: sans-serif;
+  margin: 20px;
+}
+
+#list {
+  margin: 10px 0;
+}
+
+label {
+  display: block;
+  padding: 5px;
+}
+
+input[type=text], input[type=password] {
+  width: 200px;
+  padding: 5px;
+  margin: 5px 0;
+}
+
+button {
+  padding: 8px 16px;
+  margin: 5px;
+}
+
+#status {
+  margin: 10px 0;
+  padding: 10px;
+  background: #eee;
+}

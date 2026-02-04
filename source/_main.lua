@@ -1,16 +1,18 @@
 _Consts = {
-  ['name']             = 'nmcus', -- CHANGE
-  ['version']          = '0.0',
-  ['config.file_name'] = 'config.data',
-  ['log.size']         = 10,
-  ['wifi.ap.mac']      = wifi.ap.getmac(),
-  ['wifi.sta.mac']     = wifi.sta.getmac(),
-  ['telnetd.port']     = 23,
-  ['telnetd.timeout']  = 180,
-  ['spar.file_name']   = 'http.spar',
-  ['api.index_file']   = 'index.html',
-  ['httpd.port']       = 80,
-  ['httpd.timeout']    = 180
+  ['name']               = 'nmcus', -- CHANGE
+  ['version']            = '0.0',
+  ['config.file_name']   = 'config.data',
+  ['log.size']           = 10,
+  ['wifi.ap.mac']        = wifi.ap.getmac(),
+  ['wifi.sta.mac']       = wifi.sta.getmac(),
+  ['telnetd.port']       = 23,
+  ['telnetd.timeout']    = 180,
+  ['spar.file_name']     = 'http.spar',
+  ['api.api_prefix']     = '/api/',
+  ['api.ap.index_file']  = 'index.ap.html',
+  ['api.sta.index_file'] = 'index.sta.html',
+  ['httpd.port']         = 80,
+  ['httpd.timeout']      = 180
 }
 
 _Log = _Util.new(require('_log'), _Consts['log.size'])
@@ -64,7 +66,13 @@ _Spar = _Util.new(
 _Api = _Util.new(
   require('_api'),
   _Spar,
-  _Consts['api.index_file']
+  _Consts['api.api_prefix'],
+  function()
+    if _Config:get('wifi.mode') == 'ap' then
+      return _Consts['api.ap.index_file']
+    end
+    return _Consts['api.sta.index_file']
+  end
 )
 
 _Httpd = _Util.new(
