@@ -15,7 +15,7 @@ diff -ruN nodemcu-firmware-original/app/include/user_config.h nodemcu-firmware/a
  // tool is not used.
  
 -//#define LUA_FLASH_STORE                   0x10000
-+#define LUA_FLASH_STORE                   0x10000
++#define LUA_FLASH_STORE                   0x20000
  
  // By default Lua executes the file init.lua at start up.  The following
  // define allows you to replace this with an alternative startup.  Warning:

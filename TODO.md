@@ -1,3 +1,5 @@
+- Clean led
+- Clean button
 - Fix js to modern js
 - For small post use string
 - Fill disconnect callback from network
@@ -12,8 +14,6 @@
 - Made SPAR formal description
 - Change error with logs
 - Support setup over ap
-- Support led
-- Support button
 - Make helper function for upload new lfs.img and spar over telnet
 - Add retry count for time sync
 - Finish documentation

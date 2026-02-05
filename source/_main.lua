@@ -12,7 +12,9 @@ _Consts = {
   ['api.ap.index_file']  = 'index.ap.html',
   ['api.sta.index_file'] = 'index.sta.html',
   ['httpd.port']         = 80,
-  ['httpd.timeout']      = 180
+  ['httpd.timeout']      = 180,
+  ['led.pin']            = 4,
+  ['button.pin']         = 3
 }
 
 _Log = _Util.new(require('_log'), _Consts['log.size'])
@@ -94,3 +96,29 @@ _Network.registers_set(
   }
 )
 _Network.start()
+
+_Led = _Util.new(
+  require('_led'),
+  _Consts['led.pin'],
+  {
+    active_level = 0
+  }
+)
+
+_Button = _Util.new(
+  require('_button'),
+  _Consts['button.pin']
+)
+_Button:set_callbacks(
+  {
+    on_press = function() print('==BUTTON PRESS') end,
+    on_release = function(duration_us) print(('==BUTTON RELEASE %dus'):format(duration_us)) end,
+    on_hold = function(duration_us) print(('==BUTTON HOLD %dus'):format(duration_us)) end,
+    on_clicks = function(count, total_duration_us, durations)
+      print(('==BUTTON CLICKS %d total=%dus'):format(count, total_duration_us))
+      if durations ~= nil then
+        print(('==BUTTON CLICKS DURATIONS %s'):format(_Util.to_string(durations)))
+      end
+    end
+  }
+)

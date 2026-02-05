@@ -112,7 +112,7 @@ function http_connection_class:processing()
       local version
       self.method, self.uri, version = line:match('^(%S*)%s(%S*)%s(.*)$')
       if self.method == nil then
-        self:send_simple_response(400, 'Bad Request', 'Bad Request: bad method, uri, version\r\n')
+        self:send_simple_response(400, 'Bad Request', 'Bad Request: bad method, URI, or version\r\n')
         return
       end
       self.state = 'IN_HEADER'
@@ -135,7 +135,7 @@ function http_connection_class:processing()
       if self.method == 'POST' or self.method == 'PUT' then
         self.body_size = self.headers['Content-Length']
         if self.body_size == nil then
-          self:send_simple_response(400, 'Bad Request', 'Bad Request: missing length\r\n')
+          self:send_simple_response(400, 'Bad Request', 'Bad Request: missing Content-Length\r\n')
           return
         end
         self.body_size = tonumber(self.body_size)

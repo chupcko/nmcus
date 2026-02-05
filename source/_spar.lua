@@ -80,7 +80,7 @@ function spar_class:load()
   end
   self.files_size = self:read_uint(2)
   if self.files_size == nil then
-    _Log:log('_spar', ('Missing files number in \'%s\''):format(self.file_name))
+    _Log:log('_spar', ('Missing numbers of files in \'%s\''):format(self.file_name))
     return
   end
   for i = 1, self.files_size do
@@ -138,6 +138,40 @@ function spar_class:read(name, call_on_chunk)
     call_on_chunk(chunk)
   end
   file:close()
+  return true
+end
+
+function spar_class:extract(name, destination_name)
+  if destination_name == nil then
+    destination_name = name
+  end
+  local data = self.files[name]
+  if data == nil then
+    return nil
+  end
+  local file = file.open(self.file_name, 'r')
+  if file == nil then
+    return nil
+  end
+  file:seek('set', data.offset)
+  local out = file.open(destination_name, 'w')
+  if out == nil then
+    file:close()
+    return nil
+  end
+  local left = data.size
+  while left > 0 do
+    local chunk = in_file:read(math.min(self.read_buffer_size, left))
+    if chunk == nil then
+      file:close()
+      out:close()
+      return nil
+    end
+    out:write(chunk)
+    left = left-#chunk
+  end
+  file:close()
+  out:close()
   return true
 end
 
