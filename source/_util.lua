@@ -116,6 +116,11 @@ util_module.string_ends_with = function(data, suffix)
   return data:sub(-#suffix) == suffix
 end
 
+util_module.time_string = function(sec, usec)
+  local tm = rtctime.epoch2cal(sec)
+  return ('%04d-%02d-%02dT%02d:%02d:%02d.%06dZ'):format(tm.year, tm.mon, tm.day, tm.hour, tm.min, tm.sec, usec)
+end
+
 util_module.table_shallow_copy = function(data)
   local copy = {}
   for k, v in pairs(data) do

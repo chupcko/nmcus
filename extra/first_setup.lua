@@ -1,3 +1,2 @@
-file.rename('lfs.img.new', 'lfs.img')
-file.rename('http.spar.new', 'http.spar')
+file.remove('first_setup.lua')
 node.LFS.reload('lfs.img')

@@ -7,32 +7,42 @@ BAUD ?= 115200
 LUAC_CROSS = luac.cross
 NODEMCU_TOOL = nodemcu-tool.js -p $(PORT) -b $(BAUD)
 ESPTOOL = esptool.py -p $(PORT) -b $(BAUD) --no-stub
-RM = rm -f
+CP = cp -r
+RM = rm -fr
+MD = mkdir -p
 
 LFS_IMG = lfs.img
-HTTP_SPAR = http.spar
-SOURCE = source
-SOURCE_FILES = $(shell find $(SOURCE) -type f -name '*.lua')
-HTTP = http
-HTTP_FILES = $(shell find $(HTTP) -type f)
+FIRMWARE_SPAR = firmware.spar
+FIRMWARE_DIR = firmware
+SOURCE_DIR = source
+SOURCE_FILES = $(shell find $(SOURCE_DIR) -type f -name '*.lua')
+HTTP_DIR = http
+HTTP_FILES = $(shell find $(HTTP_DIR) -type f)
 
 
 .SUFFIXES:
 
 .DEFAULT_GOAL := all
 .PHONY: all
-all: $(LFS_IMG) $(HTTP_SPAR)
+all: $(FIRMWARE_SPAR)
 
 $(LFS_IMG): $(SOURCE_FILES)
-	$(LUAC_CROSS) -p $(^)
-	$(LUAC_CROSS) -f -s -o $(@) $(^)
+	$(LUAC_CROSS) -p $(SOURCE_FILES)
+	$(LUAC_CROSS) -f -s -o $(LFS_IMG) $(SOURCE_FILES)
+
+$(FIRMWARE_DIR): $(HTTP_FILES)
+	$(RM) $(FIRMWARE_DIR)
+	$(MD) $(FIRMWARE_DIR)
+	$(CP) $(HTTP_DIR) $(FIRMWARE_DIR)
 	
-$(HTTP_SPAR): $(HTTP_FILES)
-	tool/make_spar.py $(@) $(VERSION) $(HTTP)
+$(FIRMWARE_SPAR): $(LFS_IMG) $(FIRMWARE_DIR)
+	$(RM) $(FIRMWARE_DIR)/$(LFS_IMG)
+	$(CP) $(LFS_IMG) $(FIRMWARE_DIR) 
+	tool/make_spar.py $(FIRMWARE_SPAR) $(VERSION) $(FIRMWARE_DIR)
 
 .PHONY: clean
 clean:
-	$(RM) $(LFS_IMG) $(HTTP_SPAR)
+	$(RM) $(LFS_IMG) $(FIRMWARE_DIR) $(FIRMWARE_SPAR)
 
 
 .PHONY: reset
@@ -59,26 +69,24 @@ mkfs:
 
 .PHONY: upload_lfs_img
 upload_lfs_img: $(LFS_IMG)
-	$(NODEMCU_TOOL) remove $(<).new
-	$(NODEMCU_TOOL) upload $(<) -n $(<).new
+	$(NODEMCU_TOOL) remove $(LFS_IMG).new
+	$(NODEMCU_TOOL) upload $(LFS_IMG) -n $(LFS_IMG).new
 
-.PHONY: upload_http_spar
-upload_http_spar: $(HTTP_SPAR)
-	$(NODEMCU_TOOL) remove $(<).new
-	$(NODEMCU_TOOL) upload $(<) -n $(<).new
-
-.PHONY: upload
-upload: upload_lfs_img upload_http_spar
+.PHONY: upload_firmware_spar
+upload_http_spar: $(FIRMWARE_SPAR)
+	$(NODEMCU_TOOL) remove $(FIRMWARE_SPAR).new
+	$(NODEMCU_TOOL) upload $(FIRMWARE_SPAR) -n $(FIRMWARE_SPAR).new
 
 .PHONY: reload
 reload: upload_lfs_img reset
 
 
 .PHONY: first_setup
-first_setup: mkfs upload extra/first_setup.lua
+first_setup: $(FIRMWARE_SPAR) mkfs extra/first_setup.lua
+	$(NODEMCU_TOOL) upload $(LFS_IMG)
+	$(NODEMCU_TOOL) upload $(FIRMWARE_SPAR)
 	$(NODEMCU_TOOL) upload extra/first_setup.lua
 	$(NODEMCU_TOOL) run first_setup.lua
-	$(NODEMCU_TOOL) remove first_setup.lua
 
 .PHONY: secret_upload
 secret_upload: extra/secret.lua

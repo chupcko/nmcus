@@ -9,6 +9,7 @@ function http_connection_class:constructor(httpd, socket)
   self.uri = nil
   self.headers = {}
   self.body_size = 0
+  self.body_string = nil
   self.body_file_name = nil
   self.body_file = nil
   self.body_file_size = 0
@@ -17,7 +18,7 @@ function http_connection_class:constructor(httpd, socket)
   self.socket:on(
     'receive',
     function(socket, data)
-      if self.state == 'IN_BODY' then
+      if self.state == 'IN_BODY_FILE' then
         self.input = data
       else
         self.input = self.input .. data
@@ -139,18 +140,28 @@ function http_connection_class:processing()
           return
         end
         self.body_size = tonumber(self.body_size)
-        self.body_file_name = _Fs.get_temporary_file_name('upload_', 20)
-        self.body_file = file.open(self.body_file_name, 'w')
-        if self.body_file == nil then
-          self:send_simple_response(500, 'Internal Server Error', 'Internal Server Error\r\n')
-          return
+        if self.body_size <= 256 then --@ stavi kao config
+          self.state = 'IN_BODY_STRING'
+        else
+          self.body_file_name = _Fs.get_temporary_file_name('upload_', 20) --@ config
+          self.body_file = file.open(self.body_file_name, 'w')
+          if self.body_file == nil then
+            self:send_simple_response(500, 'Internal Server Error', 'Internal Server Error\r\n')
+            return
+          end
+          self.body_file_size = 0
+          self.state = 'IN_BODY_FILE'
         end
-        self.body_file_size = 0
-        self.state = 'IN_BODY'
       else
         self.state = 'PROCESS'
       end
-    elseif self.state == 'IN_BODY' then
+    elseif self.state == 'IN_BODY_STRING' then
+      if #self.input < self.body_size then
+        return
+      end
+      self.body_string = self.input
+      self.state = 'PROCESS'
+    elseif self.state == 'IN_BODY_FILE' then
       self.body_file:write(self.input)
       self.body_file_size = self.body_file_size+self.input:len()
       self.input = ''

@@ -124,9 +124,8 @@ api_class.api_functions = {
   end,
 
   ['set_sta'] = function(http_connection)
-  end,
-
-  ['get_sta_state'] = function(http_connection)
+    print(http_connection.body_file_name, http_connection.body_string)
+    http_connection:send_simple_response(200, 'OK', 'OK\r\n')
   end,
 
   ['ok'] = function(http_connection)
@@ -147,7 +146,7 @@ function api_class:execute(http_connection)
     return self:get_file(http_connection)
   end
   if http_connection.body_file_name ~= nil then
-    _Fs.delete(http_connection.body_file_name)
+    file.remove(http_connection.body_file_name)
   end
   return false
 end

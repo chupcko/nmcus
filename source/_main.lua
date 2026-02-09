@@ -1,23 +1,4 @@
-_Consts = {
-  ['name']               = 'nmcus', -- CHANGE
-  ['version']            = '0.0',
-  ['config.file_name']   = 'config.data',
-  ['log.size']           = 10,
-  ['wifi.ap.mac']        = wifi.ap.getmac(),
-  ['wifi.sta.mac']       = wifi.sta.getmac(),
-  ['telnetd.port']       = 23,
-  ['telnetd.timeout']    = 180,
-  ['spar.file_name']     = 'http.spar',
-  ['api.api_prefix']     = '/api/',
-  ['api.ap.index_file']  = 'index.ap.html',
-  ['api.sta.index_file'] = 'index.sta.html',
-  ['httpd.port']         = 80,
-  ['httpd.timeout']      = 180,
-  ['led.pin']            = 4,
-  ['button.pin']         = 3
-}
-
-_Log = _Util.new(require('_log'), _Consts['log.size'])
+--@ REFACTORING BORDER
 
 _Crypt = _Util.new(
   require('_crypt'),
@@ -60,11 +41,6 @@ _Telnetd = _Util.new(
   _Config:get('telnetd.password')
 )
 
-_Spar = _Util.new(
-  require('_spar'),
-  _Consts['spar.file_name']
-)
-
 _Api = _Util.new(
   require('_api'),
   _Spar,
@@ -83,6 +59,8 @@ _Httpd = _Util.new(
   _Consts['httpd.timeout'],
   _Api
 )
+
+_Time = require('_time')
 
 _Network = require('_network')
 _Network.registers_set(

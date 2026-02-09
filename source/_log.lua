@@ -13,15 +13,14 @@ function log_class:log(who, message)
   if #self.data >= self.size then
     table.remove(self.data, 1)
   end
-  local sec, usec = _Time.now()
+  local sec, usec = rtctime.get()
   table.insert(self.data, { sec, usec, who, message })
 end
 
 function log_class:print()
   print('==LOG start')
   for k, v in ipairs(self.data) do
-    local time_string = _Time.string(v[1], v[2])
-    print(('%s %s %s'):format(time_string, v[3], v[4]))
+    print(('%s %s %s'):format(_Util.time_string(v[1], v[2]), v[3], v[4]))
   end
   print('==LOG end')
 end

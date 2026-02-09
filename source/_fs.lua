@@ -100,10 +100,6 @@ fs_module.dump_hex = function(file_name, offset)
   print('==HEX end')
 end
 
-fs_module.delete = function(file_name)
-  file.remove(file_name)
-end
-
 fs_module.get_temporary_file_name = function(prefix, length)
   if length == nil then
     length = 10

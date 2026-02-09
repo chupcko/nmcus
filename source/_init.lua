@@ -2,17 +2,6 @@ rtctime.set(0, 0)
 wifi.setmode(wifi.NULLMODE, true)
 print()
 
-if file.exists('http.spar.new') == true then
-  file.remove('http.spar')
-  file.rename('http.spar.new', 'http.spar')
-end
-
-if file.exists('lfs.img.new') == true then
-  file.remove('lfs.img')
-  file.rename('lfs.img.new', 'lfs.img')
-  node.LFS.reload('lfs.img')
-end
-
 package.loaders[4] = nil
 package.loaders[3] = package.loaders[2]
 package.loaders[2] = function(name)
@@ -40,7 +29,33 @@ do
 
 end
 
+_Consts = require('_consts')
 _Util = require('_util')
-_Time = require('_time')
 _Fs = require('_fs')
+_Log = _Util.new(require('_log'), _Consts['log.size'])
+
+local have_new_lfs = false
+if file.exists(_Consts['firmware.file_name_new']) == true then
+  file.remove(_Consts['firmware.file_name'])
+  file.rename(_Consts['firmware.file_name_new'], _Consts['firmware.file_name'])
+  have_new_lfs = true
+end
+
+_Spar = _Util.new(require('_spar'), _Consts['firmware.file_name'])
+
+if have_new_lfs then
+  file.remove(_Consts['firmware.lfs_file_name_new'])
+  _Spar:extract(_Consts['firmware.lfs_file_name'], _Consts['firmware.lfs_file_name_new']) --@ proveri
+end
+
+if file.exists(_Consts['firmware.lfs_file_name_new']) == true then
+  file.remove(_Consts['firmware.lfs_file_name'])
+  file.rename(_Consts['firmware.lfs_file_name_new'], _Consts['firmware.lfs_file_name'])
+  node.LFS.reload(_Consts['firmware.lfs_file_name'])
+end
+
+file.remove(_Consts['firmware.lfs_file_name'])
+
+print(('%s %s 13'):format(_Consts['name'], _Consts['version']))
+
 require('_main')
