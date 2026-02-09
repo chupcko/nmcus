@@ -45,7 +45,7 @@ _Spar = _Util.new(require('_spar'), _Consts['firmware.file_name'])
 
 if have_new_lfs then
   file.remove(_Consts['firmware.lfs_file_name_new'])
-  _Spar:extract(_Consts['firmware.lfs_file_name'], _Consts['firmware.lfs_file_name_new']) --@ proveri
+  _Spar:extract('/' .. _Consts['firmware.lfs_file_name'], _Consts['firmware.lfs_file_name_new']) --@ proveri
 end
 
 if file.exists(_Consts['firmware.lfs_file_name_new']) == true then
@@ -56,6 +56,6 @@ end
 
 file.remove(_Consts['firmware.lfs_file_name'])
 
-print(('%s %s 13'):format(_Consts['name'], _Consts['version']))
+print(('%s %s'):format(_Consts['name'], _Consts['version']))
 
 require('_main')

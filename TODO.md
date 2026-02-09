@@ -1,3 +1,5 @@
+- Disable spar version check on new upload
+- Change http and api for using spar with prefix
 - Use config table for classes and set
 - Clean led
 - Clean button

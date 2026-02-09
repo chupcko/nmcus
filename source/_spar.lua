@@ -149,29 +149,29 @@ function spar_class:extract(name, destination_name)
   if data == nil then
     return nil
   end
-  local file = file.open(self.file_name, 'r')
-  if file == nil then
+  local spar_file = file.open(self.file_name, 'r')
+  if spar_file == nil then
     return nil
   end
-  file:seek('set', data.offset)
-  local out = file.open(destination_name, 'w')
-  if out == nil then
-    file:close()
+  spar_file:seek('set', data.offset)
+  local destination_file = file.open(destination_name, 'w')
+  if destination_file == nil then
+    spar_file:close()
     return nil
   end
   local left = data.size
   while left > 0 do
-    local chunk = in_file:read(math.min(self.read_buffer_size, left))
+    local chunk = spar_file:read(math.min(self.read_buffer_size, left))
     if chunk == nil then
-      file:close()
-      out:close()
+      spar_file:close()
+      destination_file:close()
       return nil
     end
-    out:write(chunk)
+    destination_file:write(chunk)
     left = left-#chunk
   end
-  file:close()
-  out:close()
+  spar_file:close()
+  destination_file:close()
   return true
 end
 
