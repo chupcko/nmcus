@@ -32,8 +32,9 @@ end
 
 local spar_class = _Util.class()
 
-function spar_class:constructor(file_name)
+function spar_class:constructor(file_name, ignore_version)
   self.file_name = file_name
+  self.ignore_version = ignore_version
   self.read_buffer_size = 1024 --@ take from config
   self.files_size = 0
   self.files = {}
@@ -74,7 +75,7 @@ function spar_class:load()
     _Log:log('_spar', ('Missing version in \'%s\''):format(self.file_name))
     return
   end
-  if data ~= _Consts['version'] then
+  if self.ignore_version == false and data ~= _Consts['version'] then
     _Log:log('_spar', ('Bad version %s of \'%s\', must be %s'):format(data, self.file_name, _Consts['version']))
     return
   end

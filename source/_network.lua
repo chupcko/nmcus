@@ -103,7 +103,7 @@ network_module.start = function()
         auth    = wifi.WPA_WPA2_PSK,
         save    = false
       }
-    )
+    ) --@ check
     wifi.ap.dhcp.config(
       {
         start = _Config:get('wifi.ap.dhcp_start')
@@ -118,7 +118,7 @@ network_module.start = function()
         pwd  = _Crypt:decrypt(_Config:get('wifi.sta.password')),
         save = false
       }
-    )
+    ) --@ check
   else
     error(('Bad wifi.mode \'%s\''):format(mode))
   end

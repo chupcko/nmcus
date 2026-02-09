@@ -28,7 +28,7 @@ util_module.new = function(class, ...)
   new_instance.__index = class
   new_instance.__class = class
   if type(new_instance.constructor) == 'function' then
-    result = new_instance:constructor(...)
+    local result = new_instance:constructor(...)
     if result ~= nil then
       return result
     end

@@ -23,8 +23,8 @@ function config_class:load()
   if data_string == nil then
     error(('Cannot load \'%s\''):format(self.file_name))
   end
-  local result, data = pcall(sjson.decode, self.crypt:decrypt(data_string))
-  if result == false then
+  local status, data = pcall(sjson.decode, self.crypt:decrypt(data_string))
+  if status == false then
     error(('Bad content of \'%s\''):format(self.file_name))
   end
   self.data = _Util.table_shallow_copy(data)

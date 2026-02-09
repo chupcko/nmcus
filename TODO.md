@@ -1,15 +1,12 @@
-- Disable spar version check on new upload
-- Change http and api for using spar with prefix
 - Use config table for classes and set
+- Change http and api for using spar with prefix
 - Clean led
 - Clean button
 - Fix js to modern js
 - Fill disconnect callback from network
 - Add some upload demo in _api
 - Use table.insert for input buffer in _http
-- Use local where need
 - Use preload strings, use buf[#buf+1] = chunk data = table.concat(buf)
-- Use pcall where need
 - Use collectgarbage()
 - Made SPAR formal description
 - Change error with logs

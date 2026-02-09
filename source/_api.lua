@@ -134,20 +134,28 @@ api_class.api_functions = {
 
 }
 
+function api_class:remove_body_file(http_connection)
+  if http_connection.body_file_name ~= nil then
+    file.remove(http_connection.body_file_name)
+  end
+end
+
 function api_class:execute(http_connection)
   if _Util.string_starts_with(http_connection.uri, self.api_prefix) then
     local method = http_connection.uri:sub(#self.api_prefix+1)
     if type(api_class.api_functions[method]) == 'function' then
-      api_class.api_functions[method](http_connection)
+      local status, result = pcall(api_class.api_functions[method], http_connection)
+      if status == false then
+        self:remove_body_file(http_connection)
+        return false
+      end
       return true
     end
   end
   if http_connection.method == 'GET' then
     return self:get_file(http_connection)
   end
-  if http_connection.body_file_name ~= nil then
-    file.remove(http_connection.body_file_name)
-  end
+  self:remove_body_file(http_connection)
   return false
 end
 

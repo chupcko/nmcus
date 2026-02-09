@@ -44,7 +44,7 @@ function telnetd_class:start()
   if self.server ~= nil then
     error(('The telnetd on port %d is already started'):format(self.port))
   end
-  self.server = net.createServer(net.TCP, self.timeout);
+  self.server = net.createServer(net.TCP, self.timeout)
   self.server:listen(
     self.port,
     function(socket)

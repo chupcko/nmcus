@@ -15,11 +15,18 @@ function crypt_class:encrypt(data)
 end
 
 function crypt_class:decrypt(data)
-  local result = crypto.decrypt(
-    'AES-CBC',
-    encoder.toHex(crypto.hash('MD5', self.key_function())),
-    encoder.fromBase64(data)
+  local status, result = pcal(
+    function()
+      return crypto.decrypt(
+        'AES-CBC',
+        encoder.toHex(crypto.hash('MD5', self.key_function())),
+        encoder.fromBase64(data)
+      )
+    end
   )
+  if status == false then
+    return nil
+  end
   local nul_location = result:find('\0', 1, true)
   if nul_location ~= nil then
     result = result:sub(1, nul_location-1)
